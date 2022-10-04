@@ -8,13 +8,19 @@
 import SwiftUI
 
 struct ContentView: View {
+    @ObservedObject var locationManager = LocationManager.shared
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        // Show the user auth screen if not authorised
+        Group {
+            if locationManager.userLocation == nil {
+                LocationRequestView()
+            } else {
+                Text("Hello World!")
+            }
         }
+        
+        
     }
 }
 
