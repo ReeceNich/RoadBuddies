@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreLocation
+import MapKit
 
 // https://www.youtube.com/watch?v=poSmKJ_spts
 
@@ -15,6 +16,12 @@ class LocationManager: NSObject, ObservableObject {
     private let manager = CLLocationManager()
     // Users location. Used for If not allowed, present auth view, else dismiss the auth view.
     @Published var userLocation: CLLocation?
+    // user current region
+    // NOTE: Used to have @Published... however was throwing a warning about publishing changes from within view updates not allowed.
+    var region = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 51.509865, longitude: -0.118092),
+        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+    )
     // access location manager from anywhere in the app.
     static let shared = LocationManager()
     
@@ -52,6 +59,12 @@ extension LocationManager: CLLocationManagerDelegate {
     // When we recieve the users location. Update the userLocation property.
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
+        
         self.userLocation = location
+        self.region = MKCoordinateRegion(
+//            center: userLocation!.coordinate,
+            center: CLLocationCoordinate2D(latitude: userLocation!.coordinate.latitude+0.001, longitude: userLocation!.coordinate.longitude),
+            span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+        )
     }
 }

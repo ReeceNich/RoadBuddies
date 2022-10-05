@@ -11,7 +11,7 @@ import SwiftUI
 struct Driving_BehavioursApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            StartView()
         }
     }
 }

@@ -15,21 +15,26 @@ struct LocationRequestView: View {
             Color(.systemBlue).ignoresSafeArea()
             
             VStack {
+                Text("Driving Behaviours")
+                    .font(.largeTitle)
+                    .fontWeight(.heavy)
+                    .padding()
+                
                 Spacer()
                 
                 Image(systemName: "paperplane.circle.fill")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 200, height: 200)
+                    .frame(width: 150, height: 150)
                     .padding(.bottom, 32)
                 
-                Text("Allow location to allow tracking vehicle location?")
+                Text("Allow location to proceed?")
                     .font(.title)
                     .fontWeight(.semibold)
                     .multilineTextAlignment(.center)
                     .padding()
                 
-                Text("Vehicle speed, etc...")
+                Text("The app requires location to track your vehicle speed, location, acceleration and deceleration...")
                     .multilineTextAlignment(.center)
                     .padding()
                 
@@ -66,6 +71,7 @@ struct LocationRequestView: View {
                     .popover(isPresented: $showingPopover) {
                         ZStack {
                             Color(.systemBlue)
+                                .ignoresSafeArea()
                             VStack {
                                 Text("Your location is required")
                                     .font(.title)
@@ -78,7 +84,7 @@ struct LocationRequestView: View {
                                     .font(.headline)
                                     .padding()
                                 
-                                Text("If you have revoked location services, you will need to go to Settings -> Privacy -> Location Services to enable location.")
+                                Text("If you have revoked location services, you will need to go to Settings -> Privacy -> Location Services and enable location.")
                                     .multilineTextAlignment(.center)
                                     .padding()
                                 
