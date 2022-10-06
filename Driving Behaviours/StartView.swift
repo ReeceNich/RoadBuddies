@@ -19,10 +19,20 @@ struct StartView: View {
                     
 
                 } else if let userLocation = locationManager.userLocation {
-                    MainView(userLocation: userLocation)
-//                        .navigationBarTitle(Text("Driving Behaviours"))
+                    
+                    
+                    TabView {
+                        MainView(userLocation: userLocation)
+                            .tabItem {
+                                Label("Home", systemImage: "house")
+                            }
                         
-
+                        SettingsView()
+                            .tabItem {
+                                Label("Settings", systemImage: "gear")
+                            }
+                        
+                    }
                 }
             }
 

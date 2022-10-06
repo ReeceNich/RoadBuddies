@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8602DB3128EE060A005EF2E8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8602DB3028EE060A005EF2E8 /* SettingsView.swift */; };
+		8602DB3328EE4B11005EF2E8 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8602DB3228EE4B11005EF2E8 /* SettingsStore.swift */; };
 		86035A1328ECB01400D3A5BA /* Driving_BehavioursApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86035A1228ECB01400D3A5BA /* Driving_BehavioursApp.swift */; };
 		86035A1528ECB01400D3A5BA /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86035A1428ECB01400D3A5BA /* StartView.swift */; };
 		86035A1728ECB01500D3A5BA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 86035A1628ECB01500D3A5BA /* Assets.xcassets */; };
@@ -15,9 +17,12 @@
 		86035A2628ECB43600D3A5BA /* LocationRequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86035A2528ECB43600D3A5BA /* LocationRequestView.swift */; };
 		86035A2A28EDBB5200D3A5BA /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86035A2928EDBB5200D3A5BA /* MainView.swift */; };
 		861D0D0228EDEC00003AC6BA /* SpeedLimitSign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861D0D0128EDEC00003AC6BA /* SpeedLimitSign.swift */; };
+		8620D40628EDF79500B08E1D /* SecretMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8620D40528EDF79500B08E1D /* SecretMenuView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8602DB3028EE060A005EF2E8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		8602DB3228EE4B11005EF2E8 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		86035A0F28ECB01400D3A5BA /* Driving Behaviours.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Driving Behaviours.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		86035A1228ECB01400D3A5BA /* Driving_BehavioursApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Driving_BehavioursApp.swift; sourceTree = "<group>"; };
 		86035A1428ECB01400D3A5BA /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
@@ -27,6 +32,7 @@
 		86035A2528ECB43600D3A5BA /* LocationRequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationRequestView.swift; sourceTree = "<group>"; };
 		86035A2928EDBB5200D3A5BA /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		861D0D0128EDEC00003AC6BA /* SpeedLimitSign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedLimitSign.swift; sourceTree = "<group>"; };
+		8620D40528EDF79500B08E1D /* SecretMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecretMenuView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +69,9 @@
 				86035A1228ECB01400D3A5BA /* Driving_BehavioursApp.swift */,
 				86035A1428ECB01400D3A5BA /* StartView.swift */,
 				86035A2928EDBB5200D3A5BA /* MainView.swift */,
+				8602DB3028EE060A005EF2E8 /* SettingsView.swift */,
+				8602DB3228EE4B11005EF2E8 /* SettingsStore.swift */,
+				8620D40528EDF79500B08E1D /* SecretMenuView.swift */,
 				86035A2328ECB3F800D3A5BA /* LocationManager.swift */,
 				86035A2528ECB43600D3A5BA /* LocationRequestView.swift */,
 				86035A1628ECB01500D3A5BA /* Assets.xcassets */,
@@ -157,8 +166,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8620D40628EDF79500B08E1D /* SecretMenuView.swift in Sources */,
+				8602DB3128EE060A005EF2E8 /* SettingsView.swift in Sources */,
 				861D0D0228EDEC00003AC6BA /* SpeedLimitSign.swift in Sources */,
 				86035A1528ECB01400D3A5BA /* StartView.swift in Sources */,
+				8602DB3328EE4B11005EF2E8 /* SettingsStore.swift in Sources */,
 				86035A2628ECB43600D3A5BA /* LocationRequestView.swift in Sources */,
 				86035A1328ECB01400D3A5BA /* Driving_BehavioursApp.swift in Sources */,
 				86035A2A28EDBB5200D3A5BA /* MainView.swift in Sources */,

@@ -13,10 +13,20 @@ struct MainView: View {
     @State private var mapTracking: MapUserTrackingMode = .follow
     var userLocation: CLLocation
     
+    @State private var showingSecretPopover = false
+    
+    
     var body: some View {
         ScrollView {
             ZStack {
-
+                
+                Text("Psst... hold the speed limit sign!")
+                    .padding(.all, 5)
+                    .padding(.horizontal, 40)
+                    .foregroundColor(.white)
+                    .background(Color(.systemGray))
+                    .clipShape(Capsule())
+                    .position(x: UIScreen.main.bounds.width/2, y: -200)
                 
                 
                 ZStack {
@@ -26,7 +36,7 @@ struct MainView: View {
                     
                     
                     
-                    Text("\(userLocation.speed > 0 ? userLocation.speed*2.237 : 0, specifier: "%.0f") mph")
+                    Text("\(userLocation.speed > 0 ? userLocation.speed : 0, specifier: "%.0f") ms")
                         .font(Font.callout)
                         .fontWeight(.bold)
                         .padding(.all, 10)
@@ -43,6 +53,14 @@ struct MainView: View {
                             Spacer()
                             
                             SpeedLimitSign(limit: 70, currentSpeed: 65)
+                                .simultaneousGesture(LongPressGesture(minimumDuration: 2).onEnded { _ in
+                                    print("Secret Long Press Action!")
+                                    showingSecretPopover = true
+                                })
+                                .popover(isPresented: $showingSecretPopover) {
+                                    SecretMenuView()
+                                }
+                            
                         }
                         .padding()
                     }
@@ -51,7 +69,7 @@ struct MainView: View {
             }
             
             Button {
-                print("Go!")
+                print("Pressed Go!")
             } label: {
                 Text("Go!")
                     .font(.title)
