@@ -7,39 +7,33 @@
 
 import SwiftUI
 
-struct SpeedUnit: Identifiable {
-    let id: Int
-    let name: String
-    let multiplierFromMs: Double
-}
 
 struct SettingsView: View {
-    var speedUnits = [
-        SpeedUnit(id: 0, name: "ms", multiplierFromMs: 1),
-        SpeedUnit(id: 1, name: "mph", multiplierFromMs: 2.237),
-        SpeedUnit(id: 2, name: "kph", multiplierFromMs: 3.6)
-    ]
+    @EnvironmentObject var settings: SettingsStore
     
     var body: some View {
         NavigationView {
             List {
                 Section("Speed Units") {
-                    ForEach(speedUnits) { speedUnit in
-                        HStack {
-                            Text("\(speedUnit.name)")
-                            Spacer()
+                    Picker("Select your speed units", selection: $settings.speedUnit) {
+                        ForEach(SettingsStore.SpeedUnit.allCases) { speedUnit in
+                            HStack {
+                                Text("\(speedUnit.rawValue)")
+                                Spacer()
+                            }
+                            .tag(speedUnit)
                         }
                     }
                 }
                 
-                Section("Speed Units") {
-                    ForEach(speedUnits) { speedUnit in
-                        HStack {
-                            Text("\(speedUnit.name)")
-                            Spacer()
-                        }
-                    }
-                }
+//                Section("Speed Units") {
+//                    ForEach(speedUnits) { speedUnit in
+//                        HStack {
+//                            Text("\(speedUnit.name)")
+//                            Spacer()
+//                        }
+//                    }
+//                }
                 
                 
             }
@@ -51,5 +45,6 @@ struct SettingsView: View {
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
+            .environmentObject(SettingsStore())
     }
 }

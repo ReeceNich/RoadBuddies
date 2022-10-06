@@ -9,6 +9,7 @@ import SwiftUI
 import MapKit
 
 struct MainView: View {
+    @EnvironmentObject var settings: SettingsStore
     @ObservedObject var locationManager = LocationManager.shared
     @State private var mapTracking: MapUserTrackingMode = .follow
     var userLocation: CLLocation
@@ -36,7 +37,7 @@ struct MainView: View {
                     
                     
                     
-                    Text("\(userLocation.speed > 0 ? userLocation.speed : 0, specifier: "%.0f") ms")
+                    Text("\(userLocation.speed > 0 ? settings.convertSpeed(to: settings.speedUnit, value: userLocation.speed) : 0, specifier: "%.0f") \(settings.speedUnit.rawValue)")
                         .font(Font.callout)
                         .fontWeight(.bold)
                         .padding(.all, 10)
@@ -52,7 +53,7 @@ struct MainView: View {
                         HStack() {
                             Spacer()
                             
-                            SpeedLimitSign(limit: 70, currentSpeed: 65)
+                            SpeedLimitSign(limit: 99, currentSpeedInMs: userLocation.speed)
                                 .simultaneousGesture(LongPressGesture(minimumDuration: 2).onEnded { _ in
                                     print("Secret Long Press Action!")
                                     showingSecretPopover = true
@@ -99,5 +100,6 @@ struct MainView: View {
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
         MainView(userLocation: CLLocation(latitude: 50, longitude: -1))
+            .environmentObject(SettingsStore())
     }
 }
