@@ -14,24 +14,27 @@ struct SpeedLimitSign: View {
     var currentSpeedInMs: Double = 99
     
     var body: some View {
-        ZStack {
-            Text("top")
-            
-            Text("\(limit)")
-                .padding(25)
-                .font(.largeTitle)
-                .fontWeight(.heavy)
-                .foregroundColor(.black)
-                .background(
-                    Circle()
-                        .strokeBorder(.red, lineWidth: 8)
-                        .background(Circle().fill(.white))
-                )
-            
-            Text("\n\n\n" + settings.speedUnit.rawValue)
-                .font(.caption2)
+        if limit >= 0 {
+            ZStack {
+                Text("top")
                 
-            
+                Text("\(limit)")
+                    .padding(25)
+                    .font(.largeTitle)
+                    .fontWeight(.heavy)
+                    .foregroundColor(.black)
+                    .background(
+                        Circle()
+                            .strokeBorder(.red, lineWidth: 8)
+                            .background(Circle().fill(.white))
+                    )
+                
+                Text("\n\n\n" + settings.speedUnit.rawValue)
+                    .font(.caption2)
+                    .foregroundColor(.black)
+                
+                
+            }
         }
         
     }

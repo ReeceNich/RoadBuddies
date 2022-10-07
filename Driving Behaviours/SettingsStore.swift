@@ -34,7 +34,7 @@ class SettingsStore: ObservableObject {
     enum SpeedUnit: String, CaseIterable, Identifiable, Codable {
         case ms = "m/s"
         case mph = "mph"
-        case kph = "kph"
+        case kmh = "km/h"
         var id: String { return self.rawValue }
     }
     
@@ -45,7 +45,7 @@ class SettingsStore: ObservableObject {
                 return 1.0 * value
             case .mph:
                 return 2.23694 * value
-            case .kph:
+            case .kmh:
                 return 3.6 * value
 //            default:
 //                return 1.0
