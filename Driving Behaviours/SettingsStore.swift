@@ -39,14 +39,27 @@ class SettingsStore: ObservableObject {
     }
     
     
-    func convertSpeed(to: SpeedUnit, value: Double) -> Double {
+    func convertSpeed(from: SpeedUnit = .ms, to: SpeedUnit, value: Double) -> Double {
+        var toConvert = value
+        
+        if from != .ms {
+            if from == .kmh {
+                toConvert = value / 3.6
+            }
+            
+            if from == .mph {
+                toConvert = value / 2.23694
+            }
+        }
+    
+        
         switch to {
             case .ms:
-                return 1.0 * value
+                return 1.0 * toConvert
             case .mph:
-                return 2.23694 * value
+                return 2.23694 * toConvert
             case .kmh:
-                return 3.6 * value
+                return 3.6 * toConvert
 //            default:
 //                return 1.0
         }

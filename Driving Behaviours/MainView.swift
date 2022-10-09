@@ -12,7 +12,7 @@ struct MainView: View {
     @EnvironmentObject var settings: SettingsStore
     @ObservedObject var locationManager = LocationManager.shared
     @State private var mapTracking: MapUserTrackingMode = .follow
-    var userLocation: CLLocation
+//    var userLocation: CLLocation
     
     @State private var showingSecretPopover = false
     
@@ -22,7 +22,17 @@ struct MainView: View {
     @State private var maxSpeed: String = ""
     @State private var maxSpeedVal: Int = -1
     @State private var maxSpeedUnit: SettingsStore.SpeedUnit = .kmh
+    @State private var streetFetchedDate: Date = Date.now
 //    @State private var streetTags: StreetDataManager.Tags = StreetDataManager.Tags(name: nil, ref: nil, maxspeed: nil)
+    @State private var counter = 0
+    
+    var userLocationCoordinate: CLLocationCoordinate2D {
+        return locationManager.userLocation?.coordinate ?? CLLocationCoordinate2D(latitude: 0, longitude: 0)
+    }
+    
+    var userLocationSpeed: CLLocationSpeed {
+        return locationManager.userLocation?.speed ?? CLLocationSpeed(0)
+    }
     
     
     var body: some View {
@@ -47,18 +57,26 @@ struct MainView: View {
                     VStack {
                         Spacer()
                         HStack {
-                            Text("\(userLocation.speed > 0 ? settings.convertSpeed(to: settings.speedUnit, value: userLocation.speed) : 0, specifier: "%.0f") \(settings.speedUnit.rawValue)")
-                                .font(Font.title)
-                                .fontWeight(.heavy)
-                                .padding(.vertical, 15)
-                                .padding(.horizontal, 20)
-                                .foregroundColor(Color(.label))
-                            
-                                .background(
+                            VStack {
+                                Text("\(userLocationSpeed > 0 ? settings.convertSpeed(to: settings.speedUnit, value: userLocationSpeed) : 0, specifier: "%.0f")")
+                                    .font(Font.title)
+                                    .fontWeight(.heavy)
                                     
-                                    settings.convertSpeed(to: maxSpeedUnit, value: userLocation.speed) < Double(maxSpeedVal) || Double(maxSpeedVal) <= 0 ? Color(.systemGray6) : Color(.systemOrange))
-                            
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .foregroundColor(Color(.label))
+                                Text("\(settings.speedUnit.rawValue)")
+                            }
+                            .padding(.vertical, 15)
+                            .padding(.horizontal, 20)
+                            .background(
+                                
+                                settings.convertSpeed(to: maxSpeedUnit, value: userLocationSpeed) <= Double(maxSpeedVal) || Double(maxSpeedVal) <= 0 ? Color(.systemGray6) : Color(.systemRed)
+                            )
+                        
+                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .stroke(Color(.systemGray3), lineWidth: 2)
+                            )
                             
                             Spacer()
                         }
@@ -71,7 +89,7 @@ struct MainView: View {
                         HStack() {
                             Spacer()
                             
-                            SpeedLimitSign(limit: maxSpeedVal, currentSpeedInMs: userLocation.speed)
+                            SpeedLimitSign(limit: Int(settings.convertSpeed(to: settings.speedUnit, value: settings.convertSpeed(from: self.maxSpeedUnit, to: .ms, value: Double(maxSpeedVal)))), unit: settings.speedUnit)
                                 .simultaneousGesture(LongPressGesture(minimumDuration: 2).onEnded { _ in
                                     print("Secret Long Press Action!")
                                     showingSecretPopover = true
@@ -99,24 +117,60 @@ struct MainView: View {
             }
             .background(Color(.systemBlue))
             .clipShape(Circle())
+            .padding(.top)
+            
+            VStack(alignment: .leading) {
+                if streetName != "" {
+                    Text("\(streetName)")
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
+                }
+                
+                if streetRef != "" {
+                    Text("\(streetRef)")
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
+                }
+                
+                VStack(alignment: .leading) {
+                    Text("DEBUG VALUES")
+                        .font(.title2)
+                    Text("Lat: \(userLocationCoordinate.latitude)")
+                    Text("Lon: \(userLocationCoordinate.longitude)")
+                    Text("Current Speed: \(userLocationSpeed) ms")
+                    Text("Street Name: \(streetName)")
+                    Text("Max Speed: \(maxSpeed)")
+                    Text("Max Speed Val: \(maxSpeedVal)")
+                    Text("Max Speed Unit: \(maxSpeedUnit.rawValue)")
+                    Text("API Fetched: \(counter) times")
+                    Text("API Fetched: \(streetFetchedDate.description)")
+                }
+                .padding()
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color(.systemGray3), lineWidth: 2)
+                )
+            }
             .padding()
+            .frame(
+                maxWidth: .infinity,
+                alignment: .topLeading
+            )
             
             
-            Text("Lat: \(userLocation.coordinate.latitude)")
-            Text("Lon: \(userLocation.coordinate.longitude)")
-            Text("Speed: \(userLocation.speed) ms")
-            Text("Street Name: \(streetName)")
-            Text("Max Speed: \(maxSpeed)")
-            Text("Max Speed Val: \(maxSpeedVal)")
-            Text("Max Speed Unit: \(maxSpeedUnit.rawValue)")
+            
 
-                            
-            Spacer()
             
         }
         .ignoresSafeArea(edges: .top)
         .onAppear() {
+            print("DEBUG: MAIN VIEW APPEARED")
+            UIApplication.shared.isIdleTimerDisabled = true
             callGetStreetTags()
+        }
+        .onDisappear() {
+            print("DEBUG: MAIN VIEW DISAPPEARED")
+            UIApplication.shared.isIdleTimerDisabled = false
         }
         
     }
@@ -124,13 +178,16 @@ struct MainView: View {
     func callGetStreetTags() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
             print("-----> callGetStreetTags")
-            streetManager.getStreetTags(lat: userLocation.coordinate.latitude, lon: userLocation.coordinate.longitude, around: 35) { (data) in
+//            print("User Location: \(locationManager.userLocation)")
+            streetManager.getStreetTags(lat: userLocationCoordinate.latitude, lon: userLocationCoordinate.longitude, around: 25) { (data) in
                 self.maxSpeed = data.maxspeed ?? ""
                 self.maxSpeedVal = data.maxspeedval ?? -1
                 self.maxSpeedUnit = data.maxspeedunit ?? .kmh
                 self.streetName = data.name ?? ""
                 self.streetRef = data.ref ?? ""
                 
+                self.streetFetchedDate = data.fetchedDate ?? Date.distantPast
+                self.counter += 1
                 print("--> Updated Street Variables, prepare to run again")
                 callGetStreetTags()
             }
@@ -140,7 +197,7 @@ struct MainView: View {
 
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
-        MainView(userLocation: CLLocation(latitude: 51.492404, longitude: -2.541713))
+        MainView()
             .environmentObject(SettingsStore())
     }
 }

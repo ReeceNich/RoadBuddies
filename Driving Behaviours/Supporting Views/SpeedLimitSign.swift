@@ -11,7 +11,7 @@ struct SpeedLimitSign: View {
     @EnvironmentObject var settings: SettingsStore
     
     var limit: Int = 88
-    var currentSpeedInMs: Double = 99
+    var unit: SettingsStore.SpeedUnit = .kmh
     
     var body: some View {
         if limit >= 0 {
@@ -29,7 +29,7 @@ struct SpeedLimitSign: View {
                             .background(Circle().fill(.white))
                     )
                 
-                Text("\n\n\n" + settings.speedUnit.rawValue)
+                Text("\n\n\n" + unit.rawValue)
                     .font(.caption2)
                     .foregroundColor(.black)
                 

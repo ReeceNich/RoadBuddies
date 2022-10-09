@@ -20,7 +20,7 @@ class LocationManager: NSObject, ObservableObject {
     // NOTE: Used to have @Published... however was throwing a warning about publishing changes from within view updates not allowed.
     var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 51.509865, longitude: -0.118092),
-        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+        span: MKCoordinateSpan(latitudeDelta: 0.0075, longitudeDelta: 0.0075)
     )
     // access location manager from anywhere in the app.
     static let shared = LocationManager()
@@ -63,8 +63,8 @@ extension LocationManager: CLLocationManagerDelegate {
         self.userLocation = location
         self.region = MKCoordinateRegion(
 //            center: userLocation!.coordinate,
-            center: CLLocationCoordinate2D(latitude: userLocation!.coordinate.latitude+0.001, longitude: userLocation!.coordinate.longitude),
-            span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+            center: CLLocationCoordinate2D(latitude: userLocation!.coordinate.latitude+0.0005, longitude: userLocation!.coordinate.longitude),
+            span: MKCoordinateSpan(latitudeDelta: 0.0075, longitudeDelta: 0.0075)
         )
     }
 }

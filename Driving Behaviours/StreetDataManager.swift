@@ -28,6 +28,7 @@ class StreetDataManager {
         let maxspeed: String?
         var maxspeedunit: SettingsStore.SpeedUnit?
         var maxspeedval: Int?
+        var fetchedDate: Date? = Date.now
     }
     
     struct Speed: Codable {
@@ -36,10 +37,10 @@ class StreetDataManager {
     }
 
     
-    func getStreetTags(lat: Double, lon: Double, around: Double = 10.0, completion: @escaping (Tags)->Void) {
+    func getStreetTags(lat: Double, lon: Double, around: Double = 25.0, completion: @escaping (Tags)->Void) {
         let url = "https://overpass-api.de/api/interpreter?data=[out:json];way(around:\(around),\(lat),\(lon))[maxspeed];out;"
         
-        print(url)
+//        print(url)
         if let url = URL(string: url) {
             URLSession.shared.dataTask(with: url) { data, response, error in
                 if let data = data {
@@ -55,7 +56,7 @@ class StreetDataManager {
                         for var element in parsedJSON.elements {
                             if element.id == StreetDataManager.previousStreetID {
                                 // They are potentially still on the same street. Continue using this street.
-                                print("Found existing street")
+                                print("Found existing street - ID: \(element.id)")
                                 StreetDataManager.previousStreetID = element.id
                                 
                                 // Extract speed details
@@ -63,6 +64,7 @@ class StreetDataManager {
                                 
                                 element.tags.maxspeedunit = speed.unit
                                 element.tags.maxspeedval = speed.val
+                                element.tags.fetchedDate = Date.now
                                 
                                 completion(element.tags)
                                 return
@@ -80,6 +82,7 @@ class StreetDataManager {
                                 
                                 element.tags.maxspeedunit = speed.unit
                                 element.tags.maxspeedval = speed.val
+                                element.tags.fetchedDate = Date.now
                                 
                                 completion(element.tags)
                                 return
@@ -87,13 +90,15 @@ class StreetDataManager {
                         }
                         
                         // API Found no streets.
-                        completion(Tags(name: "nil", ref: "nil", maxspeed: "nil", maxspeedunit: .kmh, maxspeedval: nil))
+                        print("API Found no streets")
+                        StreetDataManager.previousStreetID = -1
+                        completion(Tags(name: nil, ref: nil, maxspeed: nil, maxspeedunit: .kmh, maxspeedval: nil, fetchedDate: Date.now))
                         return
                         
                         
                     } catch {
-                        print(error)
-                        completion(Tags(name: "Error - API", ref: "Error - API", maxspeed: "Error - API", maxspeedunit: .kmh, maxspeedval: -1))
+                        print("API Speed Limit Error: \(error)")
+                        completion(Tags(name: "Error - API", ref: "Error - API", maxspeed: "Error - API", maxspeedunit: .kmh, maxspeedval: -1, fetchedDate: Date.now))
                     }
                 }
             }.resume()
@@ -109,6 +114,6 @@ class StreetDataManager {
         
         return Speed(val: val, unit: unit)
         
-        
     }
+    
 }

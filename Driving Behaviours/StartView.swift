@@ -18,11 +18,11 @@ struct StartView: View {
                     LocationRequestView()
                     
 
-                } else if let userLocation = locationManager.userLocation {
-                    
+//                } else if let userLocation = locationManager.userLocation {
+                } else {
                     
                     TabView {
-                        MainView(userLocation: userLocation)
+                        MainView()
                             .tabItem {
                                 Label("Home", systemImage: "house")
                             }
