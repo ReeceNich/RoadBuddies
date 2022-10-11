@@ -9,6 +9,7 @@ import SwiftUI
 
 struct StartView: View {
     @ObservedObject var locationManager = LocationManager.shared
+    @EnvironmentObject var databaseManager: DatabaseManager
     
     var body: some View {
         // Show the user auth screen if not authorised
@@ -25,6 +26,11 @@ struct StartView: View {
                         MainView()
                             .tabItem {
                                 Label("Home", systemImage: "house")
+                            }
+                        
+                        LeaderboardView()
+                            .tabItem {
+                                Label("Leaderboards", systemImage: "person.3")
                             }
                         
                         SettingsView()

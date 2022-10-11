@@ -176,7 +176,7 @@ struct MainView: View {
     }
     
     func callGetStreetTags() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 20) {
             print("-----> callGetStreetTags")
 //            print("User Location: \(locationManager.userLocation)")
             streetManager.getStreetTags(lat: userLocationCoordinate.latitude, lon: userLocationCoordinate.longitude, around: 25) { (data) in
