@@ -51,8 +51,6 @@ class StreetDataManager {
                         
                         // If the previous Street ID is found in the new Street data, continue using the existing data for that street.
                         // This will minimise providing the incorrect street details e.g., on overpasses or nearby streets.
-                        print("Previous ID \(StreetDataManager.previousStreetID)")
-                        
                         for var element in parsedJSON.elements {
                             if element.id == StreetDataManager.previousStreetID {
                                 // They are potentially still on the same street. Continue using this street.
@@ -71,8 +69,6 @@ class StreetDataManager {
                             }
                         }
                         
-                        print("Did not find existing street.")
-                        
                         for var element in parsedJSON.elements {
                             if (element.tags.maxspeed != nil) {
                                 StreetDataManager.previousStreetID = element.id
@@ -90,7 +86,6 @@ class StreetDataManager {
                         }
                         
                         // API Found no streets.
-                        print("API Found no streets")
                         StreetDataManager.previousStreetID = -1
                         completion(Tags(name: nil, ref: nil, maxspeed: nil, maxspeedunit: .kmh, maxspeedval: nil, fetchedDate: Date.now))
                         return

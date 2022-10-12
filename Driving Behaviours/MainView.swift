@@ -24,7 +24,8 @@ struct MainView: View {
     @State private var maxSpeedUnit: SettingsStore.SpeedUnit = .kmh
     @State private var streetFetchedDate: Date = Date.now
 //    @State private var streetTags: StreetDataManager.Tags = StreetDataManager.Tags(name: nil, ref: nil, maxspeed: nil)
-    @State private var counter = 0
+    @State private var apiCounter = 0
+    @State private var cancelAsync = false
     
     var userLocationCoordinate: CLLocationCoordinate2D {
         return locationManager.userLocation?.coordinate ?? CLLocationCoordinate2D(latitude: 0, longitude: 0)
@@ -142,7 +143,7 @@ struct MainView: View {
                     Text("Max Speed: \(maxSpeed)")
                     Text("Max Speed Val: \(maxSpeedVal)")
                     Text("Max Speed Unit: \(maxSpeedUnit.rawValue)")
-                    Text("API Fetched: \(counter) times")
+                    Text("API Fetched: \(apiCounter) times")
                     Text("API Fetched: \(streetFetchedDate.description)")
                 }
                 .padding()
@@ -166,19 +167,22 @@ struct MainView: View {
         .onAppear() {
             print("DEBUG: MAIN VIEW APPEARED")
             UIApplication.shared.isIdleTimerDisabled = true
+            self.cancelAsync = false
             callGetStreetTags()
         }
         .onDisappear() {
             print("DEBUG: MAIN VIEW DISAPPEARED")
             UIApplication.shared.isIdleTimerDisabled = false
+            self.cancelAsync = true
         }
+        
+        
         
     }
     
     func callGetStreetTags() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 20) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             print("-----> callGetStreetTags")
-//            print("User Location: \(locationManager.userLocation)")
             streetManager.getStreetTags(lat: userLocationCoordinate.latitude, lon: userLocationCoordinate.longitude, around: 25) { (data) in
                 self.maxSpeed = data.maxspeed ?? ""
                 self.maxSpeedVal = data.maxspeedval ?? -1
@@ -187,9 +191,12 @@ struct MainView: View {
                 self.streetRef = data.ref ?? ""
                 
                 self.streetFetchedDate = data.fetchedDate ?? Date.distantPast
-                self.counter += 1
+                self.apiCounter += 1
                 print("--> Updated Street Variables, prepare to run again")
-                callGetStreetTags()
+               
+                if !self.cancelAsync {
+                    callGetStreetTags()
+                }
             }
         }
     }
