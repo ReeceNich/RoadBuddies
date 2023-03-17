@@ -54,9 +54,13 @@ struct RegisterView: View {
             
             
             Button {
-                databaseManager.registerUser(username: username, password: password, email: email, name: name) { token in
-                    print("GOT TOKEN: \(token)")
-                    self.willDismiss = true
+                databaseManager.registerUser(username: username, password: password, email: email, name: name) { response in
+                    print("GOT RESPONSE: \(response)")
+                    if response {
+                        self.willDismiss = true
+                    } else {
+                        self.willDismiss = false
+                    }
                 }
                 
                 

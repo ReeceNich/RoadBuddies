@@ -9,7 +9,7 @@ import Foundation
 
 
 class DatabaseManager: ObservableObject {
-    private let baseUrl = "https://home.reecenicholls.co.uk"
+    private let baseUrl = "http://192.168.1.166"
     @Published var currentUser: User?
     @Published var token: String? {
         willSet {
@@ -48,16 +48,15 @@ class DatabaseManager: ObservableObject {
     
     struct User: Codable, Identifiable {
         let id: String
-        let public_id: String
         let username: String
-        let password: String
+        let password: String?
         let email: String
         let name: String
     }
     
     
     func getUserInfo(token: String, completion: @escaping (User)->Void) {
-        let url = URL(string: baseUrl + "/api/get/user_info")
+        let url = URL(string: baseUrl + "/api/users/")
         var request = URLRequest(url: url!)
         
         request.setValue(token, forHTTPHeaderField: "X-Access-Tokens")
@@ -81,7 +80,7 @@ class DatabaseManager: ObservableObject {
 
                 } catch {
                     print("API Database User Info Error: \(error)")
-                    completion(User(id: "", public_id: "", username: "", password: "", email: "", name: ""))
+                    completion(User(id: "", username: "", password: nil, email: "", name: ""))
                     return
                 }
             }
@@ -130,7 +129,7 @@ class DatabaseManager: ObservableObject {
         
     }
     
-    func registerUser(username: String, password: String, email: String, name: String, completion: @escaping (String)->Void) {
+    func registerUser(username: String, password: String, email: String, name: String, completion: @escaping (Bool)->Void) {
         // Perform user register
         let url = URL(string: baseUrl + "/api/users/register")
         var request = URLRequest(url: url!)
@@ -144,6 +143,7 @@ class DatabaseManager: ObservableObject {
         let jsonData = try? JSONSerialization.data(withJSONObject: user)
         
         request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = jsonData
         
         
@@ -151,11 +151,14 @@ class DatabaseManager: ObservableObject {
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
                 print(error?.localizedDescription ?? "No data")
+                completion(false)
                 return
             }
             let responseJSON = try? JSONSerialization.jsonObject(with: data, options: [])
             if let responseJSON = responseJSON as? [String: Any] {
                 print(responseJSON)
+                completion(true)
+                return
             }
         }
 
