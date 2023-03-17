@@ -9,7 +9,7 @@ import Foundation
 
 
 class DatabaseManager: ObservableObject {
-    private let baseUrl = ""
+    private let baseUrl = "https://home.reecenicholls.co.uk"
     @Published var currentUser: User?
     @Published var token: String? {
         willSet {
@@ -57,7 +57,7 @@ class DatabaseManager: ObservableObject {
     
     
     func getUserInfo(token: String, completion: @escaping (User)->Void) {
-        let url = URL(string: baseUrl + "/api/user_info")
+        let url = URL(string: baseUrl + "/api/get/user_info")
         var request = URLRequest(url: url!)
         
         request.setValue(token, forHTTPHeaderField: "X-Access-Tokens")
@@ -92,7 +92,7 @@ class DatabaseManager: ObservableObject {
     
     func loginUser(username: String, password: String, completion: @escaping (String)->Void) {
         // Perform user login and get the access token
-        let url = URL(string: baseUrl + "/api/login")
+        let url = URL(string: baseUrl + "/api/users/login")
         var request = URLRequest(url: url!)
         
         let loginString = String(format: "%@:%@", username, password)
@@ -127,6 +127,39 @@ class DatabaseManager: ObservableObject {
                 return
             }
         }.resume()
+        
+    }
+    
+    func registerUser(username: String, password: String, email: String, name: String, completion: @escaping (String)->Void) {
+        // Perform user register
+        let url = URL(string: baseUrl + "/api/users/register")
+        var request = URLRequest(url: url!)
+        
+        var user = [String : String]()
+        user["username"] = username
+        user["password"] = password
+        user["email"] = email
+        user["name"] = name
+
+        let jsonData = try? JSONSerialization.data(withJSONObject: user)
+        
+        request.httpMethod = "POST"
+        request.httpBody = jsonData
+        
+        
+        // make register request to API
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                print(error?.localizedDescription ?? "No data")
+                return
+            }
+            let responseJSON = try? JSONSerialization.jsonObject(with: data, options: [])
+            if let responseJSON = responseJSON as? [String: Any] {
+                print(responseJSON)
+            }
+        }
+
+        task.resume()
         
     }
     
