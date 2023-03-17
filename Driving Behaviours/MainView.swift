@@ -27,6 +27,11 @@ struct MainView: View {
     @State private var apiCounter = 0
     @State private var cancelAsync = false
     
+    
+    // Recording Location Data variables
+    @State private var isRecording = false
+    @State private var count = 0
+    
     var userLocationCoordinate: CLLocationCoordinate2D {
         return locationManager.userLocation?.coordinate ?? CLLocationCoordinate2D(latitude: 0, longitude: 0)
     }
@@ -40,13 +45,13 @@ struct MainView: View {
         ScrollView {
             ZStack {
                 
-                Text("Psst... hold the speed limit sign!")
-                    .padding(.all, 5)
-                    .padding(.horizontal, 40)
-                    .foregroundColor(.white)
-                    .background(Color(.systemGray))
-                    .clipShape(Capsule())
-                    .position(x: UIScreen.main.bounds.width/2, y: -200)
+//                Text("Psst... hold the speed limit sign!")
+//                    .padding(.all, 5)
+//                    .padding(.horizontal, 40)
+//                    .foregroundColor(.white)
+//                    .background(Color(.systemGray))
+//                    .clipShape(Capsule())
+//                    .position(x: UIScreen.main.bounds.width/2, y: -200)
                 
                 
                 ZStack {
@@ -106,17 +111,24 @@ struct MainView: View {
                 }
             }
             
+            
             Button {
+                isRecording.toggle()
                 print("Pressed Go!")
+                print("isRecording = " + String(isRecording))
+                if isRecording {
+                    print("Start recording!")
+                    self.startRecording()
+                }
             } label: {
-                Text("Go!")
+                Text(isRecording ? "Stop" : "Go!")
                     .font(.title)
                     .fontWeight(.semibold)
                     .padding(30)
                     .foregroundColor(.white)
                     
             }
-            .background(Color(.systemBlue))
+            .background(isRecording ? Color(.systemRed) : Color(.systemBlue))
             .clipShape(Circle())
             .padding(.top)
             
@@ -143,8 +155,11 @@ struct MainView: View {
                     Text("Max Speed: \(maxSpeed)")
                     Text("Max Speed Val: \(maxSpeedVal)")
                     Text("Max Speed Unit: \(maxSpeedUnit.rawValue)")
-                    Text("API Fetched: \(apiCounter) times")
-                    Text("API Fetched: \(streetFetchedDate.description)")
+                    VStack(alignment: .leading) {
+                        Text("API Fetched: \(apiCounter) times")
+                        Text("API Fetched: \(streetFetchedDate.description)")
+                        Text("Is Recording: \(isRecording.description)")
+                    }
                 }
                 .padding()
                 .overlay(
@@ -167,39 +182,65 @@ struct MainView: View {
         .onAppear() {
             print("DEBUG: MAIN VIEW APPEARED")
             UIApplication.shared.isIdleTimerDisabled = true
-            self.cancelAsync = false
-            callGetStreetTags()
         }
         .onDisappear() {
             print("DEBUG: MAIN VIEW DISAPPEARED")
             UIApplication.shared.isIdleTimerDisabled = false
-            self.cancelAsync = true
         }
-        
-        
-        
     }
     
-    func callGetStreetTags() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            print("-----> callGetStreetTags")
-            streetManager.getStreetTags(lat: userLocationCoordinate.latitude, lon: userLocationCoordinate.longitude, around: 25) { (data) in
-                self.maxSpeed = data.maxspeed ?? ""
-                self.maxSpeedVal = data.maxspeedval ?? -1
-                self.maxSpeedUnit = data.maxspeedunit ?? .kmh
-                self.streetName = data.name ?? ""
-                self.streetRef = data.ref ?? ""
-                
-                self.streetFetchedDate = data.fetchedDate ?? Date.distantPast
-                self.apiCounter += 1
-                print("--> Updated Street Variables, prepare to run again")
-               
-                if !self.cancelAsync {
-                    callGetStreetTags()
-                }
+    
+    func startRecording() {
+        DispatchQueue.global(qos: .background).async {
+            while isRecording {
+                getStreetTags()
+                recordDataToDatabase()
+                // Time to wait until the next call.
+                sleep(5)
             }
         }
     }
+    
+    func getStreetTags() {
+        print("-----> callGetStreetTags")
+        streetManager.getStreetTags(lat: userLocationCoordinate.latitude, lon: userLocationCoordinate.longitude, around: 25) { (data) in
+            self.maxSpeed = data.maxspeed ?? ""
+            self.maxSpeedVal = data.maxspeedval ?? -1
+            self.maxSpeedUnit = data.maxspeedunit ?? .kmh
+            self.streetName = data.name ?? ""
+            self.streetRef = data.ref ?? ""
+
+            self.streetFetchedDate = data.fetchedDate ?? Date.distantPast
+            self.apiCounter += 1
+            print("-----> Updated Street Variables, prepare to run again")
+        }
+    }
+    
+    func recordDataToDatabase() {
+        print("Recording data to database")
+    }
+    
+    
+//    func callGetStreetTags() {
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+//            print("-----> callGetStreetTags")
+//            streetManager.getStreetTags(lat: userLocationCoordinate.latitude, lon: userLocationCoordinate.longitude, around: 25) { (data) in
+//                self.maxSpeed = data.maxspeed ?? ""
+//                self.maxSpeedVal = data.maxspeedval ?? -1
+//                self.maxSpeedUnit = data.maxspeedunit ?? .kmh
+//                self.streetName = data.name ?? ""
+//                self.streetRef = data.ref ?? ""
+//
+//                self.streetFetchedDate = data.fetchedDate ?? Date.distantPast
+//                self.apiCounter += 1
+//                print("--> Updated Street Variables, prepare to run again")
+//
+//                if !self.cancelAsync {
+//                    callGetStreetTags()
+//                }
+//            }
+//        }
+//    }
 }
 
 struct MainView_Previews: PreviewProvider {
