@@ -24,6 +24,7 @@ class DatabaseManager: ObservableObject {
             }
         }
     }
+    @Published var currentJourney: Journey?
     
     
     init() {
@@ -52,6 +53,29 @@ class DatabaseManager: ObservableObject {
         let password: String?
         let email: String
         let name: String
+    }
+    
+    
+    struct Journey: Codable, Identifiable {
+        let journey_id: String
+        let user_id: String
+        let time_started: Date
+        let time_ended: Date?
+        var events: [JourneyEvent]?
+        
+        var id: String { journey_id }
+    }
+    
+    struct JourneyEvent: Codable, Identifiable {
+        let journey_id: String
+        let event_id: String
+        let latitude: Double
+        let longitude: Double
+        let time: Date
+        let speed: Double?
+        let is_speeding: Bool
+        
+        var id: String { event_id }
     }
     
     
@@ -170,6 +194,125 @@ class DatabaseManager: ObservableObject {
         self.currentUser = nil
         self.token = nil
     }
+    
+    
+    func newJourney(completion: @escaping (Journey)->Void) {
+        let url = URL(string: baseUrl + "/api/journey/")
+        var request = URLRequest(url: url!)
+        
+        request.setValue(self.token, forHTTPHeaderField: "X-Access-Tokens")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "POST"
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                print("Error new Journey: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            
+            do {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
+                formatter.locale = Locale(identifier: "en_US_POSIX")
+                
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .formatted(formatter)
+                let newJourney = try decoder.decode(Journey.self, from: data)
+                print(newJourney)
+                DispatchQueue.main.async {
+                    self.currentJourney = newJourney
+                    completion(newJourney)
+                }
+            } catch {
+                print("Error decoding new Journey JSON: \(error.localizedDescription)")
+            }
+        }
+
+        task.resume()
+    }
+    
+    func endJourney(completion: @escaping (Journey)->Void) {
+        let url = URL(string: baseUrl + "/api/journey/end")
+        var request = URLRequest(url: url!)
+        
+        request.setValue(self.token, forHTTPHeaderField: "X-Access-Tokens")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "POST"
+        
+        let body: [String: String] = ["journey_id": self.currentJourney!.journey_id]
+        let bodyData = try? JSONSerialization.data(withJSONObject: body)
+        
+        request.httpBody = bodyData
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                print("Error End Journey: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            
+            do {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
+                formatter.locale = Locale(identifier: "en_US_POSIX")
+                
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .formatted(formatter)
+                print("preparing to decode end journey.")
+                let endedJourney = try decoder.decode(Journey.self, from: data)
+                print(endedJourney)
+                DispatchQueue.main.async {
+                    self.currentJourney = nil
+                    completion(endedJourney)
+                }
+            } catch {
+                print("Error decoding end Journey JSON: \(error.localizedDescription)")
+            }
+        }
+
+        task.resume()
+    }
+    
+    func newJourneyEvent(latitude: Double, longitude: Double, speed: Double, is_speeding: Bool, completion: @escaping (JourneyEvent)->Void) {
+        let url = URL(string: baseUrl + "/api/journey/event")
+        var request = URLRequest(url: url!)
+        
+        request.setValue(self.token, forHTTPHeaderField: "X-Access-Tokens")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "POST"
+        
+        let body: [String: Any] = ["journey_id": self.currentJourney!.journey_id,
+                                      "latitude": latitude,
+                                      "longitude": longitude,
+                                      "speed": speed,
+                                      "is_speeding": is_speeding]
+        let bodyData = try? JSONSerialization.data(withJSONObject: body)
+        
+        request.httpBody = bodyData
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                print("Error new journey event: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            
+            do {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
+                formatter.locale = Locale(identifier: "en_US_POSIX")
+                
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .formatted(formatter)
+                let newJourneyEvent = try decoder.decode(JourneyEvent.self, from: data)
+                print(newJourneyEvent)
+                completion(newJourneyEvent)
+            } catch {
+                print("Error decoding new journey event JSON: \(error.localizedDescription)")
+            }
+        }
+
+        task.resume()
+    }
+    
     
     
     

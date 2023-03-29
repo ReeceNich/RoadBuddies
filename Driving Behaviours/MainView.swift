@@ -10,6 +10,7 @@ import MapKit
 
 struct MainView: View {
     @EnvironmentObject var settings: SettingsStore
+    @EnvironmentObject var databaseManager: DatabaseManager
     @ObservedObject var locationManager = LocationManager.shared
     @State private var mapTracking: MapUserTrackingMode = .follow
 //    var userLocation: CLLocation
@@ -74,7 +75,7 @@ struct MainView: View {
                             .padding(.vertical, 15)
                             .padding(.horizontal, 20)
                             .background(
-                                
+                                // TODO: Change this to use the is speeding var
                                 settings.convertSpeed(to: maxSpeedUnit, value: userLocationSpeed) <= Double(maxSpeedVal) || Double(maxSpeedVal) <= 0 ? Color(.systemGray6) : Color(.systemRed)
                             )
                         
@@ -119,6 +120,8 @@ struct MainView: View {
                 if isRecording {
                     print("Start recording!")
                     self.startRecording()
+                } else {
+                    print("Stop recording...")
                 }
             } label: {
                 Text(isRecording ? "Stop" : "Go!")
@@ -192,14 +195,28 @@ struct MainView: View {
     
     func startRecording() {
         DispatchQueue.global(qos: .background).async {
+            // Start a new journey. Get the Journey ID
+            databaseManager.newJourney() { (data) in
+                print("New journey created - \(databaseManager.currentJourney!.journey_id) @ \(databaseManager.currentJourney!.time_started)")
+            }
+            
+            sleep(10)
+            
+            // Get street data and record the event.
             while isRecording {
                 getStreetTags()
                 recordDataToDatabase()
                 // Time to wait until the next call.
                 sleep(5)
             }
+            
+            // Stop recording data.
+            databaseManager.endJourney { (data) in
+                print("Ended journey - \(data.journey_id) @ \(data.time_ended!)")
+            }
         }
     }
+    
     
     func getStreetTags() {
         print("-----> callGetStreetTags")
@@ -218,6 +235,20 @@ struct MainView: View {
     
     func recordDataToDatabase() {
         print("Recording data to database")
+        databaseManager.newJourneyEvent(latitude: userLocationCoordinate.latitude, longitude: userLocationCoordinate.longitude, speed: userLocationSpeed, is_speeding: self.is_speeding()) { (event) in
+            print("Recorded event: \(event.event_id)")
+        }
+        
+    }
+    
+    func is_speeding() -> Bool {
+        if maxSpeedVal <= 0 {
+            return false
+        }
+        
+        let res = settings.convertSpeed(to: maxSpeedUnit, value: userLocationSpeed) >= Double(maxSpeedVal)
+        
+        return res
     }
     
     
