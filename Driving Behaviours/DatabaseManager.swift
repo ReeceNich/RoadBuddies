@@ -25,6 +25,7 @@ class DatabaseManager: ObservableObject {
         }
     }
     @Published var currentJourney: Journey?
+    @Published var allJourneys: [Journey]?
     
     
     init() {
@@ -56,7 +57,7 @@ class DatabaseManager: ObservableObject {
     }
     
     
-    struct Journey: Codable, Identifiable {
+    struct Journey: Codable, Identifiable, Hashable {
         let journey_id: String
         let user_id: String
         let time_started: Date
@@ -66,7 +67,7 @@ class DatabaseManager: ObservableObject {
         var id: String { journey_id }
     }
     
-    struct JourneyEvent: Codable, Identifiable {
+    struct JourneyEvent: Codable, Identifiable, Hashable {
         let journey_id: String
         let event_id: String
         let latitude: Double
@@ -314,6 +315,48 @@ class DatabaseManager: ObservableObject {
     }
     
     
+    func getAllJourneys(completion: @escaping ([Journey])->Void) {
+        let url = URL(string: baseUrl + "/api/journey/")
+        var request = URLRequest(url: url!)
+        
+        request.setValue(self.token, forHTTPHeaderField: "X-Access-Tokens")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "GET"
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                print("Error all Journey: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            
+            if let json = try? JSONSerialization.jsonObject(with: data, options: []) {
+                if let jsonString = String(data: try! JSONSerialization.data(withJSONObject: json, options: .prettyPrinted), encoding: .utf8) {
+                    print(jsonString)
+                }
+            }
+            
+            
+            do {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
+                formatter.locale = Locale(identifier: "en_US_POSIX")
+                
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .formatted(formatter)
+
+                let allJourneys = try decoder.decode([Journey].self, from: data)
+                print(allJourneys)
+                DispatchQueue.main.async {
+                    self.allJourneys = allJourneys
+                    completion(allJourneys)
+                }
+            } catch {
+                print("Error decoding all Journey JSON: \(error.localizedDescription)")
+            }
+        }
+
+        task.resume()
+    }
     
     
     func getAllLiveSpeeds(completion: @escaping (LiveSpeed)->Void) {

@@ -28,6 +28,11 @@ struct StartView: View {
                                 Label("Home", systemImage: "house")
                             }
                         
+                        JourneysView()
+                            .tabItem {
+                                Label("Journeys", systemImage: "car")
+                            }
+                        
                         LeaderboardView()
                             .tabItem {
                                 Label("Leaderboards", systemImage: "person.3")
