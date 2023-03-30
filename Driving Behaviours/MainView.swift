@@ -119,7 +119,8 @@ struct MainView: View {
                 print("isRecording = " + String(isRecording))
                 if isRecording {
                     print("Start recording!")
-                    self.startRecording()
+//                    self.startRecording()
+                    self.startLocalRecording()
                 } else {
                     print("Stop recording...")
                 }
@@ -193,27 +194,57 @@ struct MainView: View {
     }
     
     
-    func startRecording() {
+//    func startRecording() {
+//        DispatchQueue.global(qos: .background).async {
+//            // Start a new journey. Get the Journey ID
+//            databaseManager.newJourney() { (data) in
+//                print("New journey created - \(databaseManager.currentJourney!.journey_id) @ \(databaseManager.currentJourney!.time_started)")
+//            }
+//
+//            sleep(10)
+//
+//            // Get street data and record the event.
+//            while isRecording {
+//                getStreetTags()
+//                recordDataToDatabase()
+//                // Time to wait until the next call.
+//                sleep(5)
+//            }
+//
+//            // Stop recording data.
+//            databaseManager.endJourney { (data) in
+//                print("Ended journey - \(data.journey_id) @ \(data.time_ended!)")
+//            }
+//        }
+//    }
+    
+    func startLocalRecording() {
         DispatchQueue.global(qos: .background).async {
             // Start a new journey. Get the Journey ID
-            databaseManager.newJourney() { (data) in
-                print("New journey created - \(databaseManager.currentJourney!.journey_id) @ \(databaseManager.currentJourney!.time_started)")
-            }
+            
+            var newJourney = DatabaseManager.Journey(journey_id: UUID().uuidString, user_id: nil, time_started: Date(), time_ended: nil)
+            newJourney.events = []
             
             sleep(10)
             
             // Get street data and record the event.
             while isRecording {
                 getStreetTags()
-                recordDataToDatabase()
+//                recordDataToDatabase()
+                
+                let newEvent = DatabaseManager.JourneyEvent(journey_id: newJourney.journey_id, event_id: UUID().uuidString, latitude: userLocationCoordinate.latitude, longitude: userLocationCoordinate.longitude, time: Date(), speed: userLocationSpeed, is_speeding: self.is_speeding())
+                
+                newJourney.events?.append(newEvent)
+                
                 // Time to wait until the next call.
                 sleep(5)
             }
             
             // Stop recording data.
-            databaseManager.endJourney { (data) in
-                print("Ended journey - \(data.journey_id) @ \(data.time_ended!)")
-            }
+            newJourney.time_ended = Date()
+            
+            print("This is the local journey: \n\(newJourney)")
+            databaseManager.addJourneyToCache(newJourney: newJourney)
         }
     }
     
@@ -233,13 +264,13 @@ struct MainView: View {
         }
     }
     
-    func recordDataToDatabase() {
-        print("Recording data to database")
-        databaseManager.newJourneyEvent(latitude: userLocationCoordinate.latitude, longitude: userLocationCoordinate.longitude, speed: userLocationSpeed, is_speeding: self.is_speeding()) { (event) in
-            print("Recorded event: \(event.event_id)")
-        }
-        
-    }
+//    func recordDataToDatabase() {
+//        print("Recording data to database")
+//        databaseManager.newJourneyEvent(latitude: userLocationCoordinate.latitude, longitude: userLocationCoordinate.longitude, speed: userLocationSpeed, is_speeding: self.is_speeding()) { (event) in
+//            print("Recorded event: \(event.event_id)")
+//        }
+//
+//    }
     
     func is_speeding() -> Bool {
         if maxSpeedVal <= 0 {

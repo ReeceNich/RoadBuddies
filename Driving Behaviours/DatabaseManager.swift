@@ -26,7 +26,7 @@ class DatabaseManager: ObservableObject {
     }
     @Published var currentJourney: Journey?
     @Published var allJourneys: [Journey]?
-    
+    @Published var cachedJourneys: [Journey]?
     
     init() {
         if let token = UserDefaults.standard.object(forKey: "token") as? String {
@@ -59,9 +59,9 @@ class DatabaseManager: ObservableObject {
     
     struct Journey: Codable, Identifiable, Hashable {
         let journey_id: String
-        let user_id: String
+        let user_id: String?
         let time_started: Date
-        let time_ended: Date?
+        var time_ended: Date?
         var events: [JourneyEvent]?
         
         var id: String { journey_id }
@@ -73,7 +73,7 @@ class DatabaseManager: ObservableObject {
         let latitude: Double
         let longitude: Double
         let time: Date
-        let speed: Double?
+        var speed: Double?
         let is_speeding: Bool
         
         var id: String { event_id }
@@ -138,6 +138,9 @@ class DatabaseManager: ObservableObject {
                             
                             DispatchQueue.main.async {
                                 self.token = token
+                                self.getUserInfo(token: token) { user in
+                                    print("Got user info when login")
+                                }
                             }
                             
                             completion(token)
@@ -197,124 +200,6 @@ class DatabaseManager: ObservableObject {
     }
     
     
-    func newJourney(completion: @escaping (Journey)->Void) {
-        let url = URL(string: baseUrl + "/api/journey/")
-        var request = URLRequest(url: url!)
-        
-        request.setValue(self.token, forHTTPHeaderField: "X-Access-Tokens")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpMethod = "POST"
-        
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data, error == nil else {
-                print("Error new Journey: \(error?.localizedDescription ?? "Unknown error")")
-                return
-            }
-            
-            do {
-                let formatter = DateFormatter()
-                formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
-                formatter.locale = Locale(identifier: "en_US_POSIX")
-                
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .formatted(formatter)
-                let newJourney = try decoder.decode(Journey.self, from: data)
-                print(newJourney)
-                DispatchQueue.main.async {
-                    self.currentJourney = newJourney
-                    completion(newJourney)
-                }
-            } catch {
-                print("Error decoding new Journey JSON: \(error.localizedDescription)")
-            }
-        }
-
-        task.resume()
-    }
-    
-    func endJourney(completion: @escaping (Journey)->Void) {
-        let url = URL(string: baseUrl + "/api/journey/end")
-        var request = URLRequest(url: url!)
-        
-        request.setValue(self.token, forHTTPHeaderField: "X-Access-Tokens")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpMethod = "POST"
-        
-        let body: [String: String] = ["journey_id": self.currentJourney!.journey_id]
-        let bodyData = try? JSONSerialization.data(withJSONObject: body)
-        
-        request.httpBody = bodyData
-        
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data, error == nil else {
-                print("Error End Journey: \(error?.localizedDescription ?? "Unknown error")")
-                return
-            }
-            
-            do {
-                let formatter = DateFormatter()
-                formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
-                formatter.locale = Locale(identifier: "en_US_POSIX")
-                
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .formatted(formatter)
-                print("preparing to decode end journey.")
-                let endedJourney = try decoder.decode(Journey.self, from: data)
-                print(endedJourney)
-                DispatchQueue.main.async {
-                    self.currentJourney = nil
-                    completion(endedJourney)
-                }
-            } catch {
-                print("Error decoding end Journey JSON: \(error.localizedDescription)")
-            }
-        }
-
-        task.resume()
-    }
-    
-    func newJourneyEvent(latitude: Double, longitude: Double, speed: Double, is_speeding: Bool, completion: @escaping (JourneyEvent)->Void) {
-        let url = URL(string: baseUrl + "/api/journey/event")
-        var request = URLRequest(url: url!)
-        
-        request.setValue(self.token, forHTTPHeaderField: "X-Access-Tokens")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpMethod = "POST"
-        
-        let body: [String: Any] = ["journey_id": self.currentJourney!.journey_id,
-                                      "latitude": latitude,
-                                      "longitude": longitude,
-                                      "speed": speed,
-                                      "is_speeding": is_speeding]
-        let bodyData = try? JSONSerialization.data(withJSONObject: body)
-        
-        request.httpBody = bodyData
-        
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data, error == nil else {
-                print("Error new journey event: \(error?.localizedDescription ?? "Unknown error")")
-                return
-            }
-            
-            do {
-                let formatter = DateFormatter()
-                formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
-                formatter.locale = Locale(identifier: "en_US_POSIX")
-                
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .formatted(formatter)
-                let newJourneyEvent = try decoder.decode(JourneyEvent.self, from: data)
-                print(newJourneyEvent)
-                completion(newJourneyEvent)
-            } catch {
-                print("Error decoding new journey event JSON: \(error.localizedDescription)")
-            }
-        }
-
-        task.resume()
-    }
-    
-    
     func getAllJourneys(completion: @escaping ([Journey])->Void) {
         let url = URL(string: baseUrl + "/api/journey/")
         var request = URLRequest(url: url!)
@@ -357,6 +242,138 @@ class DatabaseManager: ObservableObject {
 
         task.resume()
     }
+    
+    
+    
+    
+    func addJourneyToCache(newJourney: Journey) {
+        var cachedJourneys = loadCachedJourneys()
+        
+        // append new elements to the cachedJourneys
+        cachedJourneys.append(newJourney)
+        
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let fileURL = documentsDirectory.appendingPathComponent("cachedJourneys")
+        
+        // Save the cachedJourneys back to the filesystem
+        do {
+            let data = try JSONEncoder().encode(cachedJourneys)
+            try data.write(to: fileURL)
+        } catch {
+            print("Error saving cachedJourneys data: \(error.localizedDescription)")
+        }
+        
+        DispatchQueue.main.async {
+            self.cachedJourneys = cachedJourneys
+        }
+    }
+    
+    // Loads the cached journeys into the published variable self.cachedJourneys
+    func loadCachedJourneys() -> [Journey] {
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let fileURL = documentsDirectory.appendingPathComponent("cachedJourneys")
+
+        var cachedJourneys: [Journey]
+
+        if FileManager.default.fileExists(atPath: fileURL.path) {
+            do {
+                let data = try Data(contentsOf: fileURL)
+                cachedJourneys = try JSONDecoder().decode([Journey].self, from: data)
+            } catch {
+                print("Error loading cachedJourneys data: \(error.localizedDescription)")
+                cachedJourneys = []
+            }
+        } else {
+            cachedJourneys = []
+        }
+        
+        DispatchQueue.main.async {
+            self.cachedJourneys = cachedJourneys
+        }
+        return cachedJourneys
+    }
+    
+    func resetCachedJourneys() {
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let fileURL = documentsDirectory.appendingPathComponent("cachedJourneys")
+
+        do {
+            try FileManager.default.removeItem(at: fileURL)
+        } catch {
+            print("Error removing cachedJourneys data: \(error.localizedDescription)")
+        }
+        
+        DispatchQueue.main.async {
+            self.cachedJourneys = nil
+        }
+    }
+    
+    
+    func uploadCachedJourneys() {
+        let cachedJourneys = loadCachedJourneys()
+        resetCachedJourneys()
+        
+        let group = DispatchGroup()
+        
+        // upload to API
+        for journey in cachedJourneys {
+            let url = URL(string: baseUrl + "/api/journey/")
+            var request = URLRequest(url: url!)
+            
+            request.setValue(self.token, forHTTPHeaderField: "X-Access-Tokens")
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpMethod = "POST"
+            
+            // encode the journey struct into JSON
+            do {
+                let encoder = JSONEncoder()
+                encoder.dateEncodingStrategy = .iso8601
+                
+                let jsonData = try encoder.encode(journey)
+                request.httpBody = jsonData
+            } catch {
+                print("Error encoding journey data: \(error.localizedDescription)")
+            }
+            
+            group.enter()
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                defer { group.leave() }
+                
+                if let error = error {
+                    // Handle error
+                    print("Error making POST request for journey: \(error.localizedDescription)")
+                } else if let response = response as? HTTPURLResponse {
+                    // Check if the response status code indicates success
+                    if response.statusCode == 200 {
+                        // The request was successful
+                        // Call your function here
+                        print("Successfully uploaded journey")
+                        
+                    } else {
+                        // The request was not successful
+                        // Handle the error
+                        print("POST request uploading journey failed with status code: \(response.statusCode)")
+                        // Any journeys that failed to upload, store them again
+                        DispatchQueue.main.async {
+                            self.addJourneyToCache(newJourney: journey)
+                        }
+                    }
+                }
+            }
+            task.resume()
+        }
+        
+        group.notify(queue: .main) {
+            // Call your function here
+            self.getAllJourneys() { (data) in
+                print("Got all journeys")
+            }
+        }
+        
+    }
+    
+    
+    
     
     
     func getAllLiveSpeeds(completion: @escaping (LiveSpeed)->Void) {

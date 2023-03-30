@@ -10,13 +10,41 @@ import MapKit
 
 struct JourneysView: View {
     @EnvironmentObject var databaseManager: DatabaseManager
+//    @State private var cachedJourneys: [DatabaseManager.Journey]?
     
     var body: some View {
         NavigationView {
             List {
-                ForEach(databaseManager.allJourneys ?? []) { row in
-                    Section() {
+                Section("Local Journeys (to be uploaded)") {
+                    if (databaseManager.cachedJourneys != nil) {
+                        Text("There are journeys to upload")
+                        Button {
+                            DispatchQueue.global(qos: .background).async {
+                                databaseManager.uploadCachedJourneys()
+                                // Get all journeys
+                            }
+                        } label: {
+                            Text("Upload!")
+                        }
+                        
+                        Button {
+                            databaseManager.resetCachedJourneys()
+                        } label: {
+                            Text("Reset cached...")
+                        }
+
+                    }
                     
+                    ForEach(databaseManager.cachedJourneys ?? []) { row in
+                        Text(row.journey_id)
+                    }
+                }
+                .onAppear() {
+                    _ = databaseManager.loadCachedJourneys()
+                }
+                
+                Section() {
+                    ForEach(databaseManager.allJourneys ?? []) { row in
                         NavigationLink(destination: JourneyDetailView(journey: row)) {
 //                            Text("Journey ID \(row.journey_id)")
                             VStack {
