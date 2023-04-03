@@ -16,6 +16,12 @@ class SettingsStore: ObservableObject {
             print("Retrieved Speed Unit: " + unit.rawValue)
             self.speedUnit = unit
         }
+        
+        if let data = UserDefaults.standard.object(forKey: "distanceUnit") as? Data,
+           let unit = try? JSONDecoder().decode(DistanceUnit.self, from: data) {
+            print("Retrieved Distance Unit: " + unit.rawValue)
+            self.distanceUnit = unit
+        }
     }
     
     @Published var speedUnit: SpeedUnit = .ms {
@@ -29,6 +35,17 @@ class SettingsStore: ObservableObject {
         }
     }
     
+    @Published var distanceUnit: DistanceUnit = .m {
+        willSet {
+            print("Setting Distance Unit")
+
+            // To store in UserDefaults
+            if let encoded = try? JSONEncoder().encode(newValue) {
+                UserDefaults.standard.set(encoded, forKey: "distanceUnit")
+            }
+        }
+    }
+    
     
     
     enum SpeedUnit: String, CaseIterable, Identifiable, Codable {
@@ -38,6 +55,12 @@ class SettingsStore: ObservableObject {
         var id: String { return self.rawValue }
     }
     
+    enum DistanceUnit: String, CaseIterable, Identifiable, Codable {
+        case m = "meters"
+        case miles = "miles"
+        case km = "km"
+        var id: String { return self.rawValue }
+    }
     
     func convertSpeed(from: SpeedUnit = .ms, to: SpeedUnit, value: Double) -> Double {
         var toConvert = value
@@ -63,6 +86,32 @@ class SettingsStore: ObservableObject {
 //            default:
 //                return 1.0
         }
+    }
+    
+    func convertDistance(from: DistanceUnit = .m, to: DistanceUnit, value: Double) -> Double {
+        var toConvert = value
+        
+        // Convert the from value into meters
+        if from != .m {
+            if from == .miles {
+                toConvert = value * 1609
+            }
+            
+            if from == .km {
+                toConvert = value * 1000
+            }
+        }
+        
+        // Convert from meters into 'to' unit
+        switch to {
+            case .m:
+                return toConvert
+            case .miles:
+                return toConvert / 1609
+            case .km:
+                return toConvert / 1000
+        }
+        
     }
     
     

@@ -87,7 +87,7 @@ class StreetDataManager {
                         
                         // API Found no streets.
                         StreetDataManager.previousStreetID = -1
-                        completion(Tags(name: nil, ref: nil, maxspeed: nil, maxspeedunit: .kmh, maxspeedval: nil, fetchedDate: Date.now))
+                        completion(Tags(name: nil, ref: nil, maxspeed: nil, maxspeedunit: .kmh, maxspeedval: -1, fetchedDate: Date.now))
                         return
                         
                         

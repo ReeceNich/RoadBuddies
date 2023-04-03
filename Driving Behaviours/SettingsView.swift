@@ -27,6 +27,18 @@ struct SettingsView: View {
                     }
                 }
                 
+                Section("Distance Units") {
+                    Picker("Select your distance units", selection: $settings.distanceUnit) {
+                        ForEach(SettingsStore.DistanceUnit.allCases) { distanceUnit in
+                            HStack {
+                                Text("\(distanceUnit.rawValue)")
+                                Spacer()
+                            }
+                            .tag(distanceUnit)
+                        }
+                    }
+                }
+                
 //                Section("Speed Units") {
 //                    ForEach(speedUnits) { speedUnit in
 //                        HStack {

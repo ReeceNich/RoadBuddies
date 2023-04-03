@@ -15,8 +15,8 @@ struct JourneysView: View {
     var body: some View {
         NavigationView {
             List {
-                Section("Local Journeys (to be uploaded)") {
-                    if (databaseManager.cachedJourneys != nil) {
+                if (databaseManager.cachedJourneys != []) {
+                    Section("Local Journeys (to be uploaded)") {
                         Text("There are journeys to upload")
                         Button {
                             DispatchQueue.global(qos: .background).async {
@@ -39,9 +39,7 @@ struct JourneysView: View {
                         Text(row.journey_id)
                     }
                 }
-                .onAppear() {
-                    _ = databaseManager.loadCachedJourneys()
-                }
+                
                 
                 Section() {
                     ForEach(databaseManager.allJourneys ?? []) { row in
@@ -68,6 +66,8 @@ struct JourneysView: View {
                     print("Got all journeys")
                 }
             }
+            
+            _ = databaseManager.loadCachedJourneys()
         }
     }
 }

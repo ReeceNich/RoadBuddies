@@ -9,7 +9,8 @@ import Foundation
 
 
 class DatabaseManager: ObservableObject {
-    private let baseUrl = "http://192.168.1.166"
+//    private let baseUrl = "http://192.168.1.166"
+    private let baseUrl = "http://141.147.69.72:8080"
     @Published var currentUser: User?
     @Published var token: String? {
         willSet {
@@ -32,6 +33,7 @@ class DatabaseManager: ObservableObject {
         if let token = UserDefaults.standard.object(forKey: "token") as? String {
             self.token = token
         }
+        print("BaseURL: \(baseUrl)")
     }
     
     
@@ -77,6 +79,24 @@ class DatabaseManager: ObservableObject {
         let is_speeding: Bool
         
         var id: String { event_id }
+    }
+    
+    struct JourneyReport: Codable, Identifiable {
+        let journey_id: String
+        var total_distance: Double
+        let speeding_percentage: Double
+        let speeding_separate_violations: Int
+        var speeding_locations: [[JourneyReportSpeedingLocation]]?
+        
+        var id: String { journey_id }
+    }
+    
+    struct JourneyReportSpeedingLocation: Codable, Identifiable {
+        let latitude: Double
+        let longitude: Double
+        let speed: Double
+        
+        var id: String { UUID().uuidString }
     }
     
     
@@ -342,6 +362,10 @@ class DatabaseManager: ObservableObject {
                 if let error = error {
                     // Handle error
                     print("Error making POST request for journey: \(error.localizedDescription)")
+                    DispatchQueue.main.async {
+                        self.addJourneyToCache(newJourney: journey)
+                    }
+                    
                 } else if let response = response as? HTTPURLResponse {
                     // Check if the response status code indicates success
                     if response.statusCode == 200 {
@@ -371,6 +395,51 @@ class DatabaseManager: ObservableObject {
         }
         
     }
+    
+    
+    
+    // Get Report
+    func getJourneyReport(journey_id: String, completion: @escaping (JourneyReport)->Void) {
+        let url = URL(string: baseUrl + "/api/journey/report")
+        var request = URLRequest(url: url!)
+        
+        var journey_details = [String : String]()
+        journey_details["journey_id"] = journey_id
+
+        let jsonData = try? JSONSerialization.data(withJSONObject: journey_details)
+        
+        request.httpBody = jsonData
+        request.setValue(self.token, forHTTPHeaderField: "X-Access-Tokens")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "POST"
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                print("Error Journey Report: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            
+            do {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
+                formatter.locale = Locale(identifier: "en_US_POSIX")
+                
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .formatted(formatter)
+
+                let journeyReport = try decoder.decode(JourneyReport.self, from: data)
+                DispatchQueue.main.async {
+                    completion(journeyReport)
+                }
+            } catch {
+                print("Error decoding all Journey JSON: \(error.localizedDescription)")
+                return
+            }
+        }
+
+        task.resume()
+    }
+    
     
     
     
