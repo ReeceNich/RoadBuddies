@@ -21,6 +21,7 @@
 		8660EBE029C4C511000194FA /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8660EBDF29C4C511000194FA /* RegisterView.swift */; };
 		869EA67928F37F0400906E50 /* LeaderboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869EA67828F37F0400906E50 /* LeaderboardView.swift */; };
 		869EA67B28F382F700906E50 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869EA67A28F382F700906E50 /* DatabaseManager.swift */; };
+		86BFE7A429DB6E2E00497690 /* JourneyMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86BFE7A329DB6E2E00497690 /* JourneyMapView.swift */; };
 		86DD463028EF29ED00693D99 /* StreetDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DD462F28EF29ED00693D99 /* StreetDataManager.swift */; };
 		86E2593C29D4C16E00D25B10 /* JourneysView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E2593B29D4C16E00D25B10 /* JourneysView.swift */; };
 		86E2593E29D4CADE00D25B10 /* JourneyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E2593D29D4CADE00D25B10 /* JourneyDetailView.swift */; };
@@ -44,6 +45,7 @@
 		8660EBDF29C4C511000194FA /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
 		869EA67828F37F0400906E50 /* LeaderboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardView.swift; sourceTree = "<group>"; };
 		869EA67A28F382F700906E50 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
+		86BFE7A329DB6E2E00497690 /* JourneyMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyMapView.swift; sourceTree = "<group>"; };
 		86DD462F28EF29ED00693D99 /* StreetDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreetDataManager.swift; sourceTree = "<group>"; };
 		86E2593B29D4C16E00D25B10 /* JourneysView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneysView.swift; sourceTree = "<group>"; };
 		86E2593D29D4CADE00D25B10 /* JourneyDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyDetailView.swift; sourceTree = "<group>"; };
@@ -96,6 +98,7 @@
 				8660EBDF29C4C511000194FA /* RegisterView.swift */,
 				86E2593B29D4C16E00D25B10 /* JourneysView.swift */,
 				86E2593D29D4CADE00D25B10 /* JourneyDetailView.swift */,
+				86BFE7A329DB6E2E00497690 /* JourneyMapView.swift */,
 				869EA67828F37F0400906E50 /* LeaderboardView.swift */,
 				8620D40528EDF79500B08E1D /* SecretMenuView.swift */,
 				86035A1628ECB01500D3A5BA /* Assets.xcassets */,
@@ -202,6 +205,7 @@
 				861D0D0228EDEC00003AC6BA /* SpeedLimitSign.swift in Sources */,
 				86035A1528ECB01400D3A5BA /* StartView.swift in Sources */,
 				8602DB3328EE4B11005EF2E8 /* SettingsStore.swift in Sources */,
+				86BFE7A429DB6E2E00497690 /* JourneyMapView.swift in Sources */,
 				86035A2628ECB43600D3A5BA /* LocationRequestView.swift in Sources */,
 				869EA67928F37F0400906E50 /* LeaderboardView.swift in Sources */,
 				869EA67B28F382F700906E50 /* DatabaseManager.swift in Sources */,

@@ -27,6 +27,8 @@ struct LoginView: View {
                 .cornerRadius(5.0)
                 .padding(.bottom, 20)
                 .textContentType(.username)
+                .autocapitalization(.none)
+            
             SecureField("Password", text: $password)
                 .padding()
                 .background(Color(.systemGray6))

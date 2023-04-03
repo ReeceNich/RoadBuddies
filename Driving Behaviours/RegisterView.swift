@@ -37,6 +37,7 @@ struct RegisterView: View {
                 .cornerRadius(5.0)
                 .padding(.bottom, 20)
                 .textContentType(.username)
+                .autocapitalization(.none)
             
             SecureField("Password", text: $password)
                 .padding()
@@ -51,6 +52,8 @@ struct RegisterView: View {
                 .cornerRadius(5.0)
                 .padding(.bottom, 20)
                 .textContentType(.emailAddress)
+                .autocapitalization(.none)
+                .keyboardType(.emailAddress)
             
             
             Button {
