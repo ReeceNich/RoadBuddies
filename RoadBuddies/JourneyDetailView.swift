@@ -1,6 +1,6 @@
 //
 //  JourneyDetailView.swift
-//  Driving Behaviours
+//  RoadBuddies
 //
 //  Created by Reece Nicholls on 29/03/2023.
 //

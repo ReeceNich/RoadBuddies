@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		8602DB3128EE060A005EF2E8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8602DB3028EE060A005EF2E8 /* SettingsView.swift */; };
 		8602DB3328EE4B11005EF2E8 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8602DB3228EE4B11005EF2E8 /* SettingsStore.swift */; };
-		86035A1328ECB01400D3A5BA /* Driving_BehavioursApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86035A1228ECB01400D3A5BA /* Driving_BehavioursApp.swift */; };
+		86035A1328ECB01400D3A5BA /* RoadBuddiesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86035A1228ECB01400D3A5BA /* RoadBuddiesApp.swift */; };
 		86035A1528ECB01400D3A5BA /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86035A1428ECB01400D3A5BA /* StartView.swift */; };
 		86035A1728ECB01500D3A5BA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 86035A1628ECB01500D3A5BA /* Assets.xcassets */; };
 		86035A1A28ECB01500D3A5BA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 86035A1928ECB01500D3A5BA /* Preview Assets.xcassets */; };
@@ -26,14 +26,14 @@
 		86E2593C29D4C16E00D25B10 /* JourneysView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E2593B29D4C16E00D25B10 /* JourneysView.swift */; };
 		86E2593E29D4CADE00D25B10 /* JourneyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E2593D29D4CADE00D25B10 /* JourneyDetailView.swift */; };
 		86FCD99628F5C5D2006247F3 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86FCD99528F5C5D2006247F3 /* LoginView.swift */; };
-		86FCD99928F654D8006247F3 /* Driving-Behaviours-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 86FCD99828F654D8006247F3 /* Driving-Behaviours-Info.plist */; };
+		86FCD99928F654D8006247F3 /* RoadBuddies-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 86FCD99828F654D8006247F3 /* RoadBuddies-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		8602DB3028EE060A005EF2E8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		8602DB3228EE4B11005EF2E8 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
-		86035A0F28ECB01400D3A5BA /* Driving Behaviours.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Driving Behaviours.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		86035A1228ECB01400D3A5BA /* Driving_BehavioursApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Driving_BehavioursApp.swift; sourceTree = "<group>"; };
+		86035A0F28ECB01400D3A5BA /* RoadBuddies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RoadBuddies.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		86035A1228ECB01400D3A5BA /* RoadBuddiesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoadBuddiesApp.swift; sourceTree = "<group>"; };
 		86035A1428ECB01400D3A5BA /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 		86035A1628ECB01500D3A5BA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		86035A1928ECB01500D3A5BA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -50,7 +50,7 @@
 		86E2593B29D4C16E00D25B10 /* JourneysView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneysView.swift; sourceTree = "<group>"; };
 		86E2593D29D4CADE00D25B10 /* JourneyDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyDetailView.swift; sourceTree = "<group>"; };
 		86FCD99528F5C5D2006247F3 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
-		86FCD99828F654D8006247F3 /* Driving-Behaviours-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Driving-Behaviours-Info.plist"; sourceTree = "<group>"; };
+		86FCD99828F654D8006247F3 /* RoadBuddies-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "RoadBuddies-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,8 +67,8 @@
 		86035A0628ECB01400D3A5BA = {
 			isa = PBXGroup;
 			children = (
-				86FCD99828F654D8006247F3 /* Driving-Behaviours-Info.plist */,
-				86035A1128ECB01400D3A5BA /* Driving Behaviours */,
+				86FCD99828F654D8006247F3 /* RoadBuddies-Info.plist */,
+				86035A1128ECB01400D3A5BA /* RoadBuddies */,
 				86035A1028ECB01400D3A5BA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -76,16 +76,16 @@
 		86035A1028ECB01400D3A5BA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				86035A0F28ECB01400D3A5BA /* Driving Behaviours.app */,
+				86035A0F28ECB01400D3A5BA /* RoadBuddies.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		86035A1128ECB01400D3A5BA /* Driving Behaviours */ = {
+		86035A1128ECB01400D3A5BA /* RoadBuddies */ = {
 			isa = PBXGroup;
 			children = (
 				861D0D0028EDEBD6003AC6BA /* Supporting Views */,
-				86035A1228ECB01400D3A5BA /* Driving_BehavioursApp.swift */,
+				86035A1228ECB01400D3A5BA /* RoadBuddiesApp.swift */,
 				86035A1428ECB01400D3A5BA /* StartView.swift */,
 				86035A2928EDBB5200D3A5BA /* MainView.swift */,
 				8602DB3028EE060A005EF2E8 /* SettingsView.swift */,
@@ -104,7 +104,7 @@
 				86035A1628ECB01500D3A5BA /* Assets.xcassets */,
 				86035A1828ECB01500D3A5BA /* Preview Content */,
 			);
-			path = "Driving Behaviours";
+			path = RoadBuddies;
 			sourceTree = "<group>";
 		};
 		86035A1828ECB01500D3A5BA /* Preview Content */ = {
@@ -126,9 +126,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		86035A0E28ECB01400D3A5BA /* Driving Behaviours */ = {
+		86035A0E28ECB01400D3A5BA /* RoadBuddies */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 86035A1D28ECB01500D3A5BA /* Build configuration list for PBXNativeTarget "Driving Behaviours" */;
+			buildConfigurationList = 86035A1D28ECB01500D3A5BA /* Build configuration list for PBXNativeTarget "RoadBuddies" */;
 			buildPhases = (
 				86035A0B28ECB01400D3A5BA /* Sources */,
 				86035A0C28ECB01400D3A5BA /* Frameworks */,
@@ -138,11 +138,11 @@
 			);
 			dependencies = (
 			);
-			name = "Driving Behaviours";
+			name = RoadBuddies;
 			packageProductDependencies = (
 			);
 			productName = "Driving Behaviours";
-			productReference = 86035A0F28ECB01400D3A5BA /* Driving Behaviours.app */;
+			productReference = 86035A0F28ECB01400D3A5BA /* RoadBuddies.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -160,7 +160,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 86035A0A28ECB01400D3A5BA /* Build configuration list for PBXProject "Driving Behaviours" */;
+			buildConfigurationList = 86035A0A28ECB01400D3A5BA /* Build configuration list for PBXProject "RoadBuddies" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -175,7 +175,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				86035A0E28ECB01400D3A5BA /* Driving Behaviours */,
+				86035A0E28ECB01400D3A5BA /* RoadBuddies */,
 			);
 		};
 /* End PBXProject section */
@@ -185,7 +185,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				86FCD99928F654D8006247F3 /* Driving-Behaviours-Info.plist in Resources */,
+				86FCD99928F654D8006247F3 /* RoadBuddies-Info.plist in Resources */,
 				86035A1A28ECB01500D3A5BA /* Preview Assets.xcassets in Resources */,
 				86035A1728ECB01500D3A5BA /* Assets.xcassets in Resources */,
 			);
@@ -209,7 +209,7 @@
 				86035A2628ECB43600D3A5BA /* LocationRequestView.swift in Sources */,
 				869EA67928F37F0400906E50 /* LeaderboardView.swift in Sources */,
 				869EA67B28F382F700906E50 /* DatabaseManager.swift in Sources */,
-				86035A1328ECB01400D3A5BA /* Driving_BehavioursApp.swift in Sources */,
+				86035A1328ECB01400D3A5BA /* RoadBuddiesApp.swift in Sources */,
 				86E2593C29D4C16E00D25B10 /* JourneysView.swift in Sources */,
 				86E2593E29D4CADE00D25B10 /* JourneyDetailView.swift in Sources */,
 				86FCD99628F5C5D2006247F3 /* LoginView.swift in Sources */,
@@ -342,11 +342,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Driving Behaviours/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"RoadBuddies/Preview Content\"";
 				DEVELOPMENT_TEAM = VA486AGXUK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Driving-Behaviours-Info.plist";
+				INFOPLIST_FILE = "RoadBuddies-Info.plist";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Please allow location access for full app functionality to track vehicle movement.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -358,7 +358,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "uk.co.reecenicholls.Driving-Behaviours";
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.reecenicholls.RoadBuddies;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -376,11 +376,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Driving Behaviours/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"RoadBuddies/Preview Content\"";
 				DEVELOPMENT_TEAM = VA486AGXUK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Driving-Behaviours-Info.plist";
+				INFOPLIST_FILE = "RoadBuddies-Info.plist";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Please allow location access for full app functionality to track vehicle movement.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -392,7 +392,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "uk.co.reecenicholls.Driving-Behaviours";
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.reecenicholls.RoadBuddies;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -406,7 +406,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		86035A0A28ECB01400D3A5BA /* Build configuration list for PBXProject "Driving Behaviours" */ = {
+		86035A0A28ECB01400D3A5BA /* Build configuration list for PBXProject "RoadBuddies" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				86035A1B28ECB01500D3A5BA /* Debug */,
@@ -415,7 +415,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		86035A1D28ECB01500D3A5BA /* Build configuration list for PBXNativeTarget "Driving Behaviours" */ = {
+		86035A1D28ECB01500D3A5BA /* Build configuration list for PBXNativeTarget "RoadBuddies" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				86035A1E28ECB01500D3A5BA /* Debug */,
