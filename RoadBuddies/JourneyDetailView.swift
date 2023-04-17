@@ -36,13 +36,12 @@ struct JourneyDetailView: View {
             Divider()
             
             VStack {
-                Text("Driving Report")
-                    .font(.title)
                 // TODO: Insert driving report here.
-                if (self.report != nil) {
-                    Text("Distance: \(self.report!.total_distance) \(settings.distanceUnit.rawValue)")
-                    Text("Speeding Violations: \(self.report!.speeding_separate_violations) violations")
-                    Text("Speeding Percentage: \(self.report!.speeding_percentage)%")
+                if let r = self.report {
+                    JourneyReportView(report: r)
+                } else {
+                    Text("Unable to load driving report")
+                        .italic()
                 }
             }
             .frame(maxWidth: .infinity)
@@ -56,6 +55,8 @@ struct JourneyDetailView: View {
             print("report")
             databaseManager.getJourneyReport(journey_id: self.journey.journey_id) { (journeyReport) in
                 var report = journeyReport
+                
+                // Convert metrics to user preferences
                 report.total_distance = settings.convertDistance(to: settings.distanceUnit, value: journeyReport.total_distance)
                 
                 self.report = report
@@ -67,6 +68,10 @@ struct JourneyDetailView: View {
 
 struct JourneyDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        JourneyDetailView(journey: DatabaseManager.Journey(journey_id: "1", user_id: "1", time_started: Date.now, time_ended: Date.now+5000, events: [DatabaseManager.JourneyEvent(journey_id: "1", event_id: "1", latitude: 51.5005, longitude: -0.1198, time: Date.now+1, speed: 10, is_speeding: false)]))
+        let db = DatabaseManager()
+        db.allJourneys = []
+        
+        return JourneyDetailView(journey: DatabaseManager.Journey(journey_id: "1", user_id: "1", time_started: Date.now, time_ended: Date.now+5000, events: [DatabaseManager.JourneyEvent(journey_id: "1", event_id: "1", latitude: 51.5005, longitude: -0.1198, time: Date.now+1, speed: 10, is_speeding: false)]))
+            .environmentObject(db)
     }
 }
