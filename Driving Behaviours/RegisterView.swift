@@ -23,6 +23,7 @@ struct RegisterView: View {
             Text("Register to RoadBuddies")
                 .font(.largeTitle)
                 .fontWeight(.heavy)
+                .multilineTextAlignment(.center)
             
             TextField("Name", text: $name)
                 .padding()

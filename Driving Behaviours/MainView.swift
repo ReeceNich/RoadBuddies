@@ -251,7 +251,7 @@ struct MainView: View {
     
     func getStreetTags() {
         print("-----> callGetStreetTags")
-        streetManager.getStreetTags(lat: userLocationCoordinate.latitude, lon: userLocationCoordinate.longitude, around: 25) { (data) in
+        streetManager.getStreetTags(lat: userLocationCoordinate.latitude, lon: userLocationCoordinate.longitude, around: 15) { (data) in
             self.maxSpeed = data.maxspeed ?? ""
             self.maxSpeedVal = data.maxspeedval ?? -1
             self.maxSpeedUnit = data.maxspeedunit ?? .kmh

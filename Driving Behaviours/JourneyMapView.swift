@@ -20,7 +20,7 @@ struct MapView: UIViewRepresentable {
         
         // Draw the non-speeding coordinates first
         let polylineAll = MKPolyline(coordinates: lineCoordinates, count: lineCoordinates.count)
-        
+        print(lineCoordinates)
         
         
         var allPolylines: [MKPolyline] = []
@@ -76,7 +76,7 @@ struct MapView: UIViewRepresentable {
                     renderer.lineWidth = 4
                 } else {
                     renderer.strokeColor = .green
-                    renderer.lineWidth = 2
+                    renderer.lineWidth = 4
                 }
                 
                 

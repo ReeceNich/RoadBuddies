@@ -58,6 +58,6 @@ struct StartView: View {
 struct StartView_Previews: PreviewProvider {
     static var previews: some View {
         StartView()
-            .previewDevice("iPhone 13 Pro")
+            .previewDevice("iPhone 14 Pro")
     }
 }

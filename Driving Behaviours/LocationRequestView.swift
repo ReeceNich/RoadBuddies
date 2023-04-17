@@ -15,7 +15,7 @@ struct LocationRequestView: View {
             Color(.systemBlue).ignoresSafeArea()
             
             VStack {
-                Text("Driving Behaviours")
+                Text("RoadBuddies")
                     .font(.largeTitle)
                     .fontWeight(.heavy)
                     .padding()

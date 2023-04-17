@@ -17,9 +17,10 @@ struct LoginView: View {
     var body: some View {
         
         VStack {
-            Text("Login to Driving App")
+            Text("Login to RoadBuddies")
                 .font(.largeTitle)
                 .fontWeight(.heavy)
+                .multilineTextAlignment(.center)
             
             TextField("Username", text: $username)
                 .padding()
