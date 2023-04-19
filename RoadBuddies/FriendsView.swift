@@ -21,6 +21,8 @@ struct FriendsView: View {
                             HStack {
                                 VStack(alignment: .leading) {
                                     Text("\(friend.friend_name)")
+                                        .font(.title3)
+                                        .fontWeight(.bold)
                                     Text("\(friend.friend_username)")
                                         .font(.callout)
                                         .foregroundColor(.secondary)
@@ -28,6 +30,12 @@ struct FriendsView: View {
                                         .font(.caption2)
                                         .foregroundColor(.secondary)
                                 }
+                                
+                                Spacer()
+                                
+                                ScoreDial(decimalPercentage: (100 - (friend.speeding_percentage ?? 0)) / 100)
+                                    .frame(width: 100, height: 100)
+                                    .padding()
                             }
                         }
                     }
