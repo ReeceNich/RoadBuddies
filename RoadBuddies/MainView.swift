@@ -14,6 +14,7 @@ struct MainView: View {
     @ObservedObject var locationManager = LocationManager.shared
     @State private var mapTracking: MapUserTrackingMode = .follow
 //    var userLocation: CLLocation
+    @State private var reportAll: DatabaseManager.JourneyReportAll?
     
     @State private var showingSecretPopover = false
     
@@ -136,7 +137,8 @@ struct MainView: View {
             .clipShape(Circle())
             .padding(.top)
             
-            VStack(alignment: .leading) {
+            // Street Details
+            VStack(alignment: .center) {
                 if streetName != "" {
                     Text("\(streetName)")
                         .font(.largeTitle)
@@ -149,6 +151,37 @@ struct MainView: View {
                         .fontWeight(.semibold)
                 }
                 
+                
+                if let report = self.reportAll, !self.isRecording {
+                    // Overall driving score
+                    Text("Overall Driving Score")
+                        .font(.title2)
+                        .padding()
+                    
+                    ScoreDial(decimalPercentage: 1 - report.speeding_percentage/100)
+                        .frame(width: 200, height: 200)
+                    
+                    // Total metrics
+                    VStack {
+                        Text("Total Driving Metrics")
+                            .font(.title2)
+                        VStack {
+                            Text("\(String(format: "%.2f", report.total_distance))")
+                                .font(.title2)
+                                .multilineTextAlignment(.center)
+                            Text("\(settings.distanceUnit.rawValue)")
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.secondary, lineWidth: 2)
+                        )
+                    }
+                }
+                
+                
+                // Debug values
                 VStack(alignment: .leading) {
                     Text("DEBUG VALUES")
                         .font(.title2)
@@ -170,6 +203,7 @@ struct MainView: View {
                     RoundedRectangle(cornerRadius: 20)
                         .stroke(Color(.systemGray3), lineWidth: 2)
                 )
+                
             }
             .padding()
             .frame(
@@ -186,6 +220,16 @@ struct MainView: View {
         .onAppear() {
             print("DEBUG: MAIN VIEW APPEARED")
             UIApplication.shared.isIdleTimerDisabled = true
+            print("report all")
+            databaseManager.getJourneyReportAll() { (journeyReportAll) in
+                
+                var report = journeyReportAll
+                print("report \(report)")
+                // Convert metrics to user preferences
+                report.total_distance = settings.convertDistance(to: settings.distanceUnit, value: journeyReportAll.total_distance)
+                
+                self.reportAll = report
+            }
         }
         .onDisappear() {
             print("DEBUG: MAIN VIEW DISAPPEARED")
@@ -309,5 +353,6 @@ struct MainView_Previews: PreviewProvider {
     static var previews: some View {
         MainView()
             .environmentObject(SettingsStore())
+            .environmentObject(DatabaseManager())
     }
 }

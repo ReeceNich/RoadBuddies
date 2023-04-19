@@ -91,6 +91,13 @@ class DatabaseManager: ObservableObject {
         var id: String { journey_id }
     }
     
+    struct JourneyReportAll: Codable, Identifiable {
+        var total_distance: Double
+        let speeding_percentage: Double
+        
+        var id: String { UUID().uuidString }
+    }
+    
     struct JourneyReportSpeedingLocation: Codable, Identifiable {
         let latitude: Double
         let longitude: Double
@@ -440,7 +447,35 @@ class DatabaseManager: ObservableObject {
         task.resume()
     }
     
-    
+    func getJourneyReportAll(completion: @escaping (JourneyReportAll)->Void) {
+        let url = URL(string: baseUrl + "/api/journey/report/all")
+        var request = URLRequest(url: url!)
+        
+        request.setValue(self.token, forHTTPHeaderField: "X-Access-Tokens")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "GET"
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                print("Error Journey Report All: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+
+                let journeyReportAll = try decoder.decode(JourneyReportAll.self, from: data)
+                DispatchQueue.main.async {
+                    completion(journeyReportAll)
+                }
+            } catch {
+                print("Error decoding all Journey Report All JSON: \(error.localizedDescription)")
+                return
+            }
+        }
+
+        task.resume()
+    }
     
     
     
