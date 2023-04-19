@@ -60,7 +60,7 @@ struct JourneyReportView: View {
                 Text("Driving Score")
                     .font(.title2)
                 
-                ScoreDial(percentageDecimal: (100-self.report.speeding_percentage)/100)
+                ScoreDial(decimalPercentage: (100-self.report.speeding_percentage)/100)
                     .frame(width: 100, height: 100)
                     .padding()
             }
@@ -71,7 +71,7 @@ struct JourneyReportView: View {
 
 struct JourneyReportView_Previews: PreviewProvider {
     static var previews: some View {
-        JourneyReportView(report: DatabaseManager.JourneyReport(journey_id: "1", total_distance: 6.9, speeding_percentage: 75, speeding_separate_violations: 4))
+        JourneyReportView(report: DatabaseManager.JourneyReport(journey_id: "1", total_distance: 6.9, speeding_percentage: 25, speeding_separate_violations: 4))
             .environmentObject(SettingsStore())
     }
 }

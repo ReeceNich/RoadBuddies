@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct ScoreDial: View {
-    let percentageDecimal: Double
+    @State private var perDec: Double = 0
+    var decimalPercentage: Double
     let numberOfDialNumbers: Int = 11
     
     var body: some View {
@@ -39,33 +40,41 @@ struct ScoreDial: View {
                     .frame(width: width, height: width)
                 
                 VStack {
-                    Spacer(minLength: 0.6 * min)
-                    Text("\(String(format: "%.0f", percentageDecimal*100))%")
-                        .font(.title2)
+                    Spacer(minLength: 0.5 * min)
+                    Text("\(String(format: "%.0f", perDec*100))%")
+                        .font(.system(size: geometry.size.height > geometry.size.width ? geometry.size.width * 0.25: geometry.size.height * 0.25))
+                        .fontWeight(.heavy)
+                        .frame(maxWidth: .infinity)
                     Spacer()
                 }
                 .frame(width: width, height: width)
                 
                 
-                withAnimation(.easeInOut) {
-                    Path { path in
-                        path.move(to: CGPoint(x: width / 2, y: height / 2))
-                        path.addLine(to: CGPoint(x: width / 2, y: min))
-                    }
-                    .stroke(Color.secondary, lineWidth: 6)
-                    .rotationEffect(.degrees(180 + (percentageDecimal * 270 - 135)))
+                
+                Path { path in
+                    path.move(to: CGPoint(x: width / 2, y: height / 2))
+                    path.addLine(to: CGPoint(x: width / 2, y: min))
                 }
+                .stroke(Color.secondary, lineWidth: 6)
+                .rotationEffect(.degrees(180 + (perDec * 270 - 135)))
+            
                 
                 
             }
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
             
         }
+        .onAppear() {
+            // For the animation
+            withAnimation(.easeInOut(duration: 3)) {
+                perDec = decimalPercentage
+            }
+        }
     }
 }
 
 struct ScoreDial_Previews: PreviewProvider {
     static var previews: some View {
-        ScoreDial(percentageDecimal: 0.5)
+        ScoreDial(decimalPercentage: 0.5)
     }
 }
