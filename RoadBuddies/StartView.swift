@@ -10,6 +10,8 @@ import SwiftUI
 struct StartView: View {
     @ObservedObject var locationManager = LocationManager.shared
     @EnvironmentObject var databaseManager: DatabaseManager
+    @State private var selectedTab = 0
+    @State private var pendingFriends: Int = 0
     
     var body: some View {
         // Show the user auth screen if not authorised
@@ -22,27 +24,37 @@ struct StartView: View {
 //                } else if let userLocation = locationManager.userLocation {
                 } else {
                     
-                    TabView {
+                    TabView(selection: $selectedTab) {
                         MainView()
                             .tabItem {
                                 Label("Home", systemImage: "house")
                             }
+                            .tag(0)
                         
                         JourneysView()
                             .tabItem {
                                 Label("Journeys", systemImage: "car")
                             }
+                            .tag(1)
                         
-                        LeaderboardView()
+                        FriendsView()
                             .tabItem {
-                                Label("Leaderboards", systemImage: "person.3")
+                                Label("Friends", systemImage: "person.3")
                             }
+                            .tag(2)
+                            .badge(self.pendingFriends)
                         
                         SettingsView()
                             .tabItem {
                                 Label("Settings", systemImage: "gear")
                             }
+                            .tag(3)
                         
+                    }
+                    .onChange(of: selectedTab) { newValue in
+                        databaseManager.getPendingFriends { pending in
+                            self.pendingFriends = pending.count
+                        }
                     }
                 }
             }

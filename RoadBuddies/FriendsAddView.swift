@@ -1,23 +1,22 @@
 //
-//  LoginView.swift
+//  FriendsAddView.swift
 //  RoadBuddies
 //
-//  Created by Reece Nicholls on 11/10/2022.
+//  Created by Reece Nicholls on 19/04/2023.
 //
 
 import SwiftUI
 
-struct LoginView: View {
+struct FriendsAddView: View {
     @EnvironmentObject var databaseManager: DatabaseManager
     @State var username: String = ""
-    @State var password: String = ""
     @Environment(\.dismiss) private var dismiss
     @State private var willDismiss = false
+    @State private var wasSuccess = true
     
     var body: some View {
-        
         VStack {
-            Text("Login to RoadBuddies")
+            Text("Add a Friend")
                 .font(.largeTitle)
                 .fontWeight(.heavy)
                 .multilineTextAlignment(.center)
@@ -30,23 +29,16 @@ struct LoginView: View {
                 .textContentType(.username)
                 .autocapitalization(.none)
             
-            SecureField("Password", text: $password)
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(5.0)
-                .padding(.bottom, 20)
-                .textContentType(.password)
-            
-            
             Button {
-                databaseManager.loginUser(username: username, password: password) { token in
-                    print("GOT TOKEN: \(token)")
-                    self.willDismiss = true
+                databaseManager.addFriend(friend_username: username) { success in
+                    if success {
+                        self.willDismiss = true
+                    } else {
+                        self.wasSuccess = false
+                    }
                 }
-                
-                
             } label: {
-                Text("LOGIN")
+                Text("ADD")
                     .font(.headline)
                     .foregroundColor(.white)
                     .padding(.horizontal, 50)
@@ -60,19 +52,20 @@ struct LoginView: View {
                 }
             }
             
-            
-            
-            
+            if !wasSuccess {
+                Text("Could not add the friend...")
+                    .padding()
+            }
             
         }
         .padding()
-        //        .navigationTitle("Login")
-
+        //
     }
 }
 
-struct LoginView_Previews: PreviewProvider {
+struct FriendsAddView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView()
+        FriendsAddView()
+            .environmentObject(DatabaseManager())
     }
 }

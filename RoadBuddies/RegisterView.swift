@@ -72,8 +72,8 @@ struct RegisterView: View {
                 Text("REGISTER")
                     .font(.headline)
                     .foregroundColor(.white)
-                    .padding()
-                    .frame(width: 220, height: 60)
+                    .padding(.horizontal, 50)
+                    .padding(.vertical, 25)
                     .background(Color(.systemBlue))
                     .cornerRadius(15.0)
             }

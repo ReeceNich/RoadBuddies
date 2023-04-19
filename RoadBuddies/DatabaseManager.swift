@@ -106,6 +106,16 @@ class DatabaseManager: ObservableObject {
         var id: String { UUID().uuidString }
     }
     
+    struct Friend: Codable, Identifiable {
+        let friend_username: String
+        let friend_name: String
+        var friend_requested: Date?
+        var friend_since: Date?
+        var speeding_percentage: Double?
+        
+        var id: String { friend_username }
+    }
+    
     
     func getUserInfo(token: String, completion: @escaping (User)->Void) {
         let url = URL(string: baseUrl + "/api/users/")
@@ -114,14 +124,11 @@ class DatabaseManager: ObservableObject {
         request.setValue(token, forHTTPHeaderField: "X-Access-Tokens")
         request.httpMethod = "GET"
         
-        print("The request is: \(request)")
-//        print(url)
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let data = data {
                 let jsonDecoder = JSONDecoder()
                 do {
                     let parsedJSON = try jsonDecoder.decode(User.self, from: data)
-                    print(parsedJSON)
                     
                     DispatchQueue.main.async {
                         self.currentUser = parsedJSON
@@ -165,9 +172,6 @@ class DatabaseManager: ObservableObject {
                             
                             DispatchQueue.main.async {
                                 self.token = token
-                                self.getUserInfo(token: token) { user in
-                                    print("Got user info when login")
-                                }
                             }
                             
                             completion(token)
@@ -211,7 +215,6 @@ class DatabaseManager: ObservableObject {
             }
             let responseJSON = try? JSONSerialization.jsonObject(with: data, options: [])
             if let responseJSON = responseJSON as? [String: Any] {
-                print(responseJSON)
                 completion(true)
                 return
             }
@@ -241,11 +244,11 @@ class DatabaseManager: ObservableObject {
                 return
             }
             
-            if let json = try? JSONSerialization.jsonObject(with: data, options: []) {
-                if let jsonString = String(data: try! JSONSerialization.data(withJSONObject: json, options: .prettyPrinted), encoding: .utf8) {
-                    print(jsonString)
-                }
-            }
+//            if let json = try? JSONSerialization.jsonObject(with: data, options: []) {
+//                if let jsonString = String(data: try! JSONSerialization.data(withJSONObject: json, options: .prettyPrinted), encoding: .utf8) {
+//                    print(jsonString)
+//                }
+//            }
             
             
             do {
@@ -257,7 +260,6 @@ class DatabaseManager: ObservableObject {
                 decoder.dateDecodingStrategy = .formatted(formatter)
 
                 let allJourneys = try decoder.decode([Journey].self, from: data)
-                print(allJourneys)
                 DispatchQueue.main.async {
                     self.allJourneys = allJourneys
                     completion(allJourneys)
@@ -479,32 +481,174 @@ class DatabaseManager: ObservableObject {
     
     
     
-    
-    func getAllLiveSpeeds(completion: @escaping (LiveSpeed)->Void) {
-        let url = baseUrl + "/api/livespeed"
+    // TODO: Deal with Timestamps. Is done, just test it.
+    func getFriends(completion: @escaping ([Friend])->Void) {
+        let url = URL(string: baseUrl + "/api/users/friend")
+        var request = URLRequest(url: url!)
         
-//        print(url)
-        if let url = URL(string: url) {
-            URLSession.shared.dataTask(with: url) { data, response, error in
-                if let data = data {
-                    let jsonDecoder = JSONDecoder()
-                    do {
-                        let parsedJSON = try jsonDecoder.decode(LiveSpeed.self, from: data)
-//                        print(parsedJSON)
-
-                        completion(parsedJSON)
-                        return
- 
-                    } catch {
-                        print("API Database Speed Limit Error: \(error)")
-                        completion(LiveSpeed(dateFetched: -1, data: []))
-                        return
-                    }
+        request.setValue(self.token, forHTTPHeaderField: "X-Access-Tokens")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "GET"
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                print("Error All Friends: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            
+            do {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
+                formatter.locale = Locale(identifier: "en_US_POSIX")
+                
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .formatted(formatter)
+                
+                let allFriends = try decoder.decode([Friend].self, from: data)
+                DispatchQueue.main.async {
+                    completion(allFriends)
                 }
-            }.resume()
+            } catch {
+                print("Error decoding all Friends JSON: \(error.localizedDescription)")
+                return
+            }
         }
+
+        task.resume()
+    }
+
+
+    func addFriend(friend_username: String, completion: @escaping (Bool)->Void) {
+        let url = URL(string: baseUrl + "/api/users/friend")
+        var request = URLRequest(url: url!)
+        
+        var data = [String : String]()
+        data["friend_username"] = friend_username
+
+        let jsonData = try? JSONSerialization.data(withJSONObject: data)
+        
+        request.httpBody = jsonData
+        request.setValue(self.token, forHTTPHeaderField: "X-Access-Tokens")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "POST"
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard error == nil else {
+                print("Error All Friends: \(error?.localizedDescription ?? "Unknown error")")
+                completion(false)
+                return
+            }
+            
+            completion(true)
+            return
+        }
+
+        task.resume()
     }
     
+    func acceptFriend(friend_username: String, completion: @escaping (Bool)->Void) {
+        let url = URL(string: baseUrl + "/api/users/friend/accept")
+        var request = URLRequest(url: url!)
+        
+        var data = [String : String]()
+        data["friend_username"] = friend_username
+
+        let jsonData = try? JSONSerialization.data(withJSONObject: data)
+        
+        request.httpBody = jsonData
+        request.setValue(self.token, forHTTPHeaderField: "X-Access-Tokens")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "POST"
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard error == nil else {
+                print("Error Accepting Friend: \(error?.localizedDescription ?? "Unknown error")")
+                completion(false)
+                return
+            }
+            
+            completion(true)
+            return
+        }
+
+        task.resume()
+    }
     
+    func removeFriend(friend_username: String, completion: @escaping (Bool)->Void) {
+        let url = URL(string: baseUrl + "/api/users/friend/remove")
+        var request = URLRequest(url: url!)
+        
+        var data = [String : String]()
+        data["friend_username"] = friend_username
+
+        let jsonData = try? JSONSerialization.data(withJSONObject: data)
+        
+        request.httpBody = jsonData
+        request.setValue(self.token, forHTTPHeaderField: "X-Access-Tokens")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "POST"
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard error == nil else {
+                print("Error Removing Friend: \(error?.localizedDescription ?? "Unknown error")")
+                completion(false)
+                return
+            }
+            print("Remove friend")
+            if let httpResponse = response as? HTTPURLResponse {
+                print(httpResponse.statusCode)
+                if httpResponse.statusCode != 200 {
+                    // handle non-200 status code here
+                    completion(false)
+                } else {
+                    // handle 200 status code here
+                    completion(true)
+                }
+            }
+            
+            if let data = data {
+                print(String(data: data, encoding: .utf8))
+            }
+            
+            return
+        }
+
+        task.resume()
+    }
+    
+    func getPendingFriends(completion: @escaping ([Friend])->Void) {
+        let url = URL(string: baseUrl + "/api/users/friend/pending")
+        var request = URLRequest(url: url!)
+        
+        request.setValue(self.token, forHTTPHeaderField: "X-Access-Tokens")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "GET"
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                print("Error Pending Friends: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            
+            do {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
+                formatter.locale = Locale(identifier: "en_US_POSIX")
+                
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .formatted(formatter)
+
+                let allPendingFriends = try decoder.decode([Friend].self, from: data)
+                DispatchQueue.main.async {
+                    completion(allPendingFriends)
+                }
+            } catch {
+                print("Error decoding all Friends JSON: \(error.localizedDescription)")
+                return
+            }
+        }
+
+        task.resume()
+    }
     
 }
